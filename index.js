@@ -6,6 +6,9 @@ var qfs = require('q-fs');
 var cssParser = require('parserlib').css;
 var cheerio = require('cheerio');
 
+var less = require('less');
+var parseLess = Q.nbind(less.render, less);
+
 /**
  * Parses a CSS file into the object model needed to apply to an HTML document.
  * @param {String}	source	The CSS source.
@@ -47,10 +50,19 @@ Styliner.prototype.clearCache = function () {
 Styliner.getStylesheet = function (path) {
 	if (this.cachedFiles.hasOwnProperty(path))
 		return this.cachedFiles[path];
-	return this.cachedFiles[path]
-		= qfs.read(qfs.join(this.baseDir, path))
-			.then(function (source) { return new ParsedStyleSheet(source); });
+
+	var promise = qfs.read(qfs.join(this.baseDir, path));
+
+	if (qfs.extension(path).toUpperCase() === '.LESS') {
+		promise = promise.then(parseLess);
+	}
+
+	promise = promise.then(function (source) { return new ParsedStyleSheet(source); });
+
+	this.cachedFiles[path] = promise;
+	return promise;
 };
+
 
 function appendStyleSource(doc, sheets) {
 	/// <summary>Inserts non-trivial CSS source (eg, media queries) from a collection of parsed stylesheets into a style tag.</summary>
