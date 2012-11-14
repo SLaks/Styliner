@@ -20,5 +20,11 @@
       "url": "http://slaks.net"
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "q": "~0.8.10",
+    "q-fs": "~0.1.33",
+    "parserlib": "~0.2.0",
+    "less": "~1.3.1"
+  }
 }
