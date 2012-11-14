@@ -4,6 +4,7 @@ var Q = require('q');
 var qfs = require('q-fs');
 
 var cssParser = require('parserlib').css;
+var cheerio = require('cheerio');
 
 /**
  * Parses a CSS file into the object model needed to apply to an HTML document.
@@ -13,7 +14,9 @@ var cssParser = require('parserlib').css;
  * @constructor
  */
 function ParsedStyleSheet(source) {
-
+	this.complexSource = source;
+	this.rules = [];
+	//TODO: Parse CSS.
 }
 
 /**
@@ -49,16 +52,51 @@ Styliner.getStylesheet = function (path) {
 			.then(function (source) { return new ParsedStyleSheet(source); });
 };
 
+function appendStyleSource(doc, sheets) {
+	/// <summary>Inserts non-trivial CSS source (eg, media queries) from a collection of parsed stylesheets into a style tag.</summary>
+	var styleSource = sheets.map(function (s) { return s.complexSource; })
+							.join('');
+	if (styleSource) {
+		var head = doc('head');
+		if (!head)
+			head = doc.root().append('<head />');
+		head.append('<style>\n\t\t' + styleSource + '</style>');
+	}
+}
+
+function applyRules(doc, rules) {
+	/// <summary>Applies a collection of parsed CSS rules to an HTML document.</summary>
+	if (!rules.length)
+		return;
+	//TODO: Apply rules as per specificity
+}
+
+
 /**
  * Asynchronously parses an HTML document and inlines styles as appropriate.
  * 
- * @param {String}			source			The HTML soruce code to parse.
- * @param {Array<String>}	[stylesheets]	An optional list of relative paths to stylesheets to include with the document.
-
+ * @param {String}			source				The HTML soruce code to parse.
+ * @param {Array<String>}	[stylesheetPaths]	An optional list of relative paths to stylesheets to include with the document.
+ *
  * @returns {Promise<String>} A promise for the inlined HTML source.
  */
-Styliner.prototype.processHTML = function (source, stylesheets) {
+Styliner.prototype.processHTML = function (source, stylesheetPaths) {
+	var doc = cheerio.load(source);
 
+	stylesheetPaths = stylesheetPaths || [];
+	doc('link[rel="stylesheet"]').each(function (elem) {
+		stylesheetPaths.push(cheerio(elem).attr('href'));
+	}).remove();
+
+	var self = this;
+	return Q.all(stylesheetPaths.map(this.getStylesheet.bind(this)))
+		.then(function (sheets) {
+			appendStyleSource(doc, sheets);
+
+			var allRules = Array.prototype.concat.apply([], sheets.map(function (s) { return s.rules; }));
+			applyRules(doc, allRules);
+			return doc.html();
+		});
 };
 
 module.exports = Styliner;
