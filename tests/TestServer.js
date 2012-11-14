@@ -29,6 +29,14 @@ var server = new capsela.Server(8774)
 							"text/html"
 						);
 					})
+					.then(null, function (err) {
+						return new capsela.Response(
+							500,
+							{},
+							err.stack,
+							"text/plain"
+						);
+					})
 		});
 
 server.start();
