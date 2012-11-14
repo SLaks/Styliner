@@ -47,7 +47,7 @@ Styliner.prototype.clearCache = function () {
  * @param {String} path The relative path to the stylesheet to parse.
  * @returns {Promise<ParsedStylesheet>}
  */
-Styliner.getStylesheet = function (path) {
+Styliner.prototype.getStylesheet = function (path) {
 	if (this.cachedFiles.hasOwnProperty(path))
 		return this.cachedFiles[path];
 
@@ -96,7 +96,7 @@ Styliner.prototype.processHTML = function (source, stylesheetPaths) {
 	var doc = cheerio.load(source);
 
 	stylesheetPaths = stylesheetPaths || [];
-	doc('link[rel="stylesheet"]').each(function (elem) {
+	doc('link[rel^="stylesheet"]').each(function (index, elem) {
 		stylesheetPaths.push(cheerio(elem).attr('href'));
 	}).remove();
 
