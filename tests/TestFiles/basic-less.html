@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Doing More with Less</title>
+        <link href="//fonts.googleapis.com/css?family=Neuton:regular" rel="stylesheet" type="text/css" />
+
+        <link rel="stylesheet/less" href="main.less" type="text/css" />
+        <link href="styles.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+
+        <div class="container">
+            <div class="content">
+                <h1>Doing More With Less</h1>
+                <h2>HTML</h2>
+                <h3>index.html</h3>
+                <p>In this demo we're using <a href="http://lesscss.org/">LESS CSS</a> to style the border-radius and the box-shadow. </p>
+                <pre>&lt;head&gt; 
+    &hellip;
+   &lt;link rel=&quot;stylesheet/less&quot; href=&quot;main.less&quot; type=&quot;text/css&quot; /&gt;
+   &lt;script src=&quot;http://lesscss.googlecode.com/files/less-1.0.18.min.js&quot;&gt;&lt;/script&gt;
+    &hellip;
+&lt;/head&gt;
+</pre>
+                <h2>CSS</h2>
+                <h3>style.less</h3>
+                <p>At the top of 'style.less' we set create four variables and give them values. </p>
+                <pre>
+@box-x: 0px;
+@box-y: 0px;
+@box-blur: 8px;
+@box-color: #999999;
+    </pre>
+                <p>We can now replace the values in our CSS with our new variables</p>
+
+
+
+                <pre>
+
+.content {
+    box-shadow:  @box-x @box-y @box-blur @box-color; /* opera */
+    -webkit-box-shadow:  @box-x @box-y @box-blur @box-color; /* safari/chrome */
+    -moz-box-shadow:  @box-x @box-y @box-blur @box-color; /* firefox */
+}
+    </pre>
+                <p>
+                    Now if we need to tweak the color of our box-shadow, a single change to the @box-color variable at the top of our style
+                    document will change it across the entire document. In this simple demo, that change takes place in three places, but that
+                    could easily be dozens places in a more complex design.
+
+</p>
+                <!-- end .content -->
+            </div>
+            <!-- end .container -->
+        </div>
+    </body>
+
+</html>

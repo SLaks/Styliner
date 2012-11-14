@@ -1,0 +1,17 @@
+
+@radius: 14px;
+ 
+@box-x: 0px;
+@box-y: 0px;
+@box-blur: 8px;
+@box-color: #000;
+
+.container {
+	border-radius: @radius;
+	-webkit-border-radius: @radius;
+	-moz-border-radius: @radius;
+	
+	box-shadow: @box-x @box-y @box-blur @box-color;
+	-moz-box-shadow: @box-x @box-y @box-blur @box-color; /* FF3.5+ */
+	-webkit-box-shadow: @box-x @box-y @box-blur @box-color; /* Saf-Chr */
+	}
