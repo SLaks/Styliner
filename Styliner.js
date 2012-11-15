@@ -6,9 +6,6 @@ var qfs = require('q-fs');
 var cssParser = require('parserlib').css;
 var cheerio = require('cheerio');
 
-var less = require('less');
-var parseLess = Q.nbind(less.render, less);
-
 /**
  * Parses a CSS file into the object model needed to apply to an HTML document.
  * @param {String}	source	The CSS source.
@@ -43,6 +40,23 @@ Styliner.prototype.clearCache = function () {
 };
 
 /**
+ * Contains parser functions to transform stylesheet formats into CSS source.
+ * To support formats like LESS or SASS, add a function that takes the source
+ * code, and returns a promise of the generated CSS source.
+ * The name of the function must match the file extension.
+ */
+Styliner.styleFormats = {
+	css: function (source) { return source; }
+};
+function getExtension(path) {
+	var match = /\.([^.]+)$/.exec(path);
+	if (match)
+		return match[1].toLowerCase();
+	else
+		return "";
+}
+
+/**
  * Asynchronously retrieves a parsed stylesheet
  * @param {String} path The relative path to the stylesheet to parse.
  * @returns {Promise<ParsedStylesheet>}
@@ -51,13 +65,13 @@ Styliner.prototype.getStylesheet = function (path) {
 	if (this.cachedFiles.hasOwnProperty(path))
 		return this.cachedFiles[path];
 
-	var promise = qfs.read(qfs.join(this.baseDir, path));
+	var format = getExtension(path);
+	if (!Styliner.styleFormats.hasOwnProperty(format))
+		throw new Error("'" + path + "' is of unsupported format " + format);
 
-	if (qfs.extension(path).toUpperCase() === '.LESS') {
-		promise = promise.then(parseLess);
-	}
-
-	promise = promise.then(function (source) { return new ParsedStyleSheet(source); });
+	var promise = qfs.read(qfs.join(this.baseDir, path))
+		.then(Styliner.styleFormats[format])
+		.then(function (source) { return new ParsedStyleSheet(source); });
 
 	this.cachedFiles[path] = promise;
 	return promise;
@@ -83,7 +97,6 @@ function applyRules(doc, rules) {
 	//TODO: Apply rules as per specificity
 }
 
-var styleExtensions = { ".less": true, ".css": true };
 /**
  * Asynchronously parses all CSS and LESS source files in the base directory.
  * Call this method to pre-populate the cache for maximum performance.
@@ -92,7 +105,7 @@ var styleExtensions = { ".less": true, ".css": true };
 Styliner.prototype.cacheAll = function () {
 	var self = this;
 
-	return qfs.listTree(this.baseDir, function (path, stat) { return styleExtensions.hasOwnProperty(qfs.extension(path).toLowerCase()); })
+	return qfs.listTree(this.baseDir, function (path, stat) { return Styliner.styleFormats.hasOwnProperty(getExtension(path)); })
 		.then(function (paths) {
 			return Q.all(paths.map(function (p) {
 				return qfs.canonical(qfs.join(self.baseDir, p))

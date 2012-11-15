@@ -2,6 +2,7 @@
 var qfs = require('q-fs');
 var capsela = require('capsela');
 var Styliner = require('..');
+require('../Styliner-less');
 
 var styliner = new Styliner(qfs.join(__dirname, 'TestFiles/'));
 
