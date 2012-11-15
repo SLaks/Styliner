@@ -8,6 +8,20 @@ var styliner = new Styliner(qfs.join(__dirname, 'TestFiles/'));
 var server = new capsela.Server(8774)
 	.addStage(
 		function (request) {
+			return this.pass(request).then(null, function (err) {
+				if (err instanceof capsela.Response)
+					return err;
+
+				return new capsela.Response(
+					500,
+					{},
+					err.stack,
+					"text/plain"
+				);
+			});
+		})
+	.addStage(
+		function (request) {
 			var path = request.url.replace(/^\//, '');
 			var filePath = qfs.join(styliner.baseDir, path);
 
@@ -33,7 +47,7 @@ var server = new capsela.Server(8774)
 			return qfs.isFile(filePath)
 					.then(function (exists) {
 						if (!exists)
-							return new capsela.Response(404);
+							throw new capsela.Response(404, {}, "Not found");
 
 						return qfs.read(filePath);
 					})
@@ -46,14 +60,6 @@ var server = new capsela.Server(8774)
 							{},
 							final,
 							"text/html"
-						);
-					})
-					.then(null, function (err) {
-						return new capsela.Response(
-							500,
-							{},
-							err.stack,
-							"text/plain"
 						);
 					});
 		});
