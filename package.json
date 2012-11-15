@@ -1,5 +1,5 @@
 {
-  "name": "Styliner",
+  "name": "styliner",
   "version": "0.0.1",
   "description": "Applies external CSS stylesheets to HTML emails to work with Gmail.",
   "keywords": [
