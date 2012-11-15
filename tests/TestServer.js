@@ -16,7 +16,7 @@ var server = new capsela.Server(8774)
 				return new capsela.Response(
 					500,
 					{},
-					err.stack,
+					err.stack || err.message,
 					"text/plain"
 				);
 			});
