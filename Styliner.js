@@ -83,32 +83,69 @@ function applyRules(doc, rules) {
 	//TODO: Apply rules as per specificity
 }
 
+var styleExtensions = { ".less": true, ".css": true };
+/**
+ * Asynchronously parses all CSS and LESS source files in the base directory.
+ * Call this method to pre-populate the cache for maximum performance.
+ * @returns {Promise}
+ */
+Styliner.prototype.cacheAll = function () {
+	var self = this;
+
+	return qfs.listTree(this.baseDir, function (path, stat) { return styleExtensions.hasOwnProperty(qfs.extension(path).toLowerCase()); })
+		.then(function (paths) {
+			return Q.all(paths.map(function (p) {
+				return qfs.canonical(qfs.join(self.baseDir, p))
+						  .then(self.getStylesheet.bind(self));
+			}));
+		});
+};
 
 /**
  * Asynchronously parses an HTML document and inlines styles as appropriate.
  * 
- * @param {String}			source				The HTML soruce code to parse.
+ * @param {String}			source				The HTML source code to parse.
+ * @param {String}			[relativePath]		The path to the directory containing the source file.  Relative paths to CSS files will be resolved from this path.  Defaults to (and relative to) the base directory. 
  * @param {Array<String>}	[stylesheetPaths]	An optional list of relative paths to stylesheets to include with the document.
  *
  * @returns {Promise<String>} A promise for the inlined HTML source.
  */
-Styliner.prototype.processHTML = function (source, stylesheetPaths) {
-	var doc = cheerio.load(source);
+Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths) {
+	if (relativePath instanceof Array) {
+		stylesheetPaths = relativePath;
+		relativePath = ".";
+	} else if (arguments.length === 1) {
+		relativePath = ".";
+	}
 
 	stylesheetPaths = stylesheetPaths || [];
-	doc('link[rel^="stylesheet"]').each(function (index, elem) {
-		stylesheetPaths.push(cheerio(elem).attr('href'));
-	}).remove();
+
+	var doc = cheerio.load(source);
+
+	var stylesheetHrefs = doc('link[rel^="stylesheet"]')
+		.remove()
+		.map(function (index, elem) {
+			var href = cheerio(elem).attr('href');
+			return qfs.join(relativePath, href);
+		});
 
 	var self = this;
-	return Q.all(stylesheetPaths.map(this.getStylesheet.bind(this)))
-		.then(function (sheets) {
-			appendStyleSource(doc, sheets);
+	var stylesheetsLoaded = Q.all(
+		stylesheetHrefs.concat(stylesheetPaths)
+			.map(function (path) {
+				path = qfs.join(self.baseDir, path);
 
-			var allRules = Array.prototype.concat.apply([], sheets.map(function (s) { return s.rules; }));
-			applyRules(doc, allRules);
-			return doc.html();
-		});
+				return qfs.canonical(path)
+						  .then(self.getStylesheet.bind(self));
+			})
+	);
+	return stylesheetsLoaded.then(function (sheets) {
+		appendStyleSource(doc, sheets);
+
+		var allRules = Array.prototype.concat.apply([], sheets.map(function (s) { return s.rules; }));
+		applyRules(doc, allRules);
+		return doc.html();
+	});
 };
 
 module.exports = Styliner;
