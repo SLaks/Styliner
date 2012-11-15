@@ -3,21 +3,9 @@
 var Q = require('q');
 var qfs = require('q-fs');
 
-var cssParser = require('parserlib').css;
 var cheerio = require('cheerio');
+var ParsedStyleSheet = require('./ParsedStyleSheet');
 
-/**
- * Parses a CSS file into the object model needed to apply to an HTML document.
- * @param {String}	source	The CSS source.
- *
- * @class ParsedStyleSheet
- * @constructor
- */
-function ParsedStyleSheet(source) {
-	this.complexSource = source;
-	this.rules = [];
-	//TODO: Parse CSS.
-}
 
 /**
  * Creates a Styliner instances that reads CSS & LESS files from the specified base directory.
@@ -77,7 +65,7 @@ Styliner.prototype.getStylesheet = function (path) {
 				fullPath
 			);
 		})
-		.then(function (source) { return new ParsedStyleSheet(source); });
+		.then(function (source) { return new ParsedStyleSheet(source, fullPath); });
 
 	this.cachedFiles[path] = promise;
 	return promise;
