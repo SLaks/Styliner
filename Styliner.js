@@ -70,6 +70,7 @@ Styliner.prototype.getStylesheet = function (path) {
 		throw new Error("'" + path + "' is of unsupported format " + format);
 
 	var promise = qfs.read(qfs.join(this.baseDir, path))
+		.then(function (stream) { return stream.toString(); })
 		.then(Styliner.styleFormats[format])
 		.then(function (source) { return new ParsedStyleSheet(source); });
 
