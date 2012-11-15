@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <meta charset="utf-8">
+        <title>Example Site - LESS</title>
+        <meta name="description" content="Example Site is a brand new company specialising in stuff.">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no">
+
+        <link rel="stylesheet" href="less/main.less" type="text/less" />
+        <!--[if lt IE 9]>
+            <script src="js/vendor/html5shiv.min.js"></script>
+            <script src="js/vendor/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+
+        <div class="wrap">
+
+            <header class="global-header" role="banner">
+                <h1 class="logo"><a href="#" title="Example Site" rel="home">Example Site</a></h1>
+                <nav class="navigation">
+                    <h1 class="visuallyhidden">Main Navigation</h1>
+                    <ul>
+                        <li><a href="#" class="current" rel="home">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+            </header>
+
+            <div class="main-content" role="main">
+
+                <article class="featured">
+                    <header>
+                        <hgroup>
+                            <h1>Some catchy intro text.</h1>
+                            <h2>Yes really!</h2>
+                        </hgroup>
+                    </header>
+                    <p><a href="#" class="btn">Find out more</a></p>
+                </article>
+
+                <article class="module">
+                    <header>
+                        <h1>What's this all about?</h1>
+                    </header>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
+                </article>
+
+            </div>
+
+            <aside class="sidebar">
+
+                <h1 class="visuallyhidden">Sidebar</h1>
+
+                <section class="module latest-news">
+                    <h1>Latest News</h1>
+                    <ol>
+                        <li>
+                            <a href="#">
+                                <dl>
+                                    <dt>Something incredible has happened&hellip;</dt>
+                                    <dd>Wednesday 22nd August</dd>
+                                </dl>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <dl>
+                                    <dt>We've got some great news for you!</dt>
+                                    <dd>Tuesday 14th August</dd>
+                                </dl>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <dl>
+                                    <dt>Example Site gets worldwide recognition</dt>
+                                    <dd>Friday 10th August</dd>
+                                </dl>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <dl>
+                                    <dt>Our new product is here!</dt>
+                                    <dd>Wednesday 1st August</dd>
+                                </dl>
+                            </a>
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="module newsletter">
+                    <h1>Sign Up for Updates</h1>
+                    <p>Enter your email address below to receive the latest updates from Example Site.</p>
+                    <form method="post" action="#">
+                        <label for="email" class="visuallyhidden">Email Address</label>
+                        <input type="email" id="email" placeholder="Email address&hellip;">
+                        <button type="submit" class="btn">Sign Up</button>
+                    </form>
+                </section>
+
+            </aside>
+
+        </div>
+
+        <footer class="global-footer">
+            <div>
+                <p class="copyright">Copyright 2012 - <a href="#" rel="home">Example Site</a></p>
+                <nav class="navigation">
+                    <h1 class="visuallyhidden">Footer Navigation</h1>
+                    <ul>
+                        <li><a href="#" class="current" rel="home">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </footer>
+
+        <script src="js/main.js"></script>
+
+    </body>
+</html>

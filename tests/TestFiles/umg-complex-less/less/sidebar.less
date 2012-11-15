@@ -1,0 +1,121 @@
+// Sidebar
+// -------------------------
+.sidebar {
+
+    // Latest News module
+    .latest-news {
+
+        h1 {
+            margin: 0 0 8px;
+        }
+
+        ol {
+            list-style: none;
+            margin: 0 0 10px;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+            display: block;
+            padding: 7px;
+
+            &:hover {
+                background-color: darken(#fff, 3%);
+            }
+
+            &:active {
+                background-color: darken(#fff, 5%);
+            }
+        }
+
+        dl {
+            margin: 0;
+        }
+
+        dt {
+            font-weight: bold;
+            font-size: @baseFontSize - 1;
+        }
+
+        dd {
+            color: lighten(@textColor, 30%);
+            font-size: @baseFontSize - 2;
+            text-align: right;
+            margin: 0;
+        }
+    }
+
+    // Newsletter Sign Up module
+    .newsletter {
+        .clearfix;
+
+        p {
+            font-size: @baseFontSize - 1;
+            margin-bottom: 11px;
+        }
+
+        // Email address field
+        input {
+            #gradient > .vertical(#ebebeb, #f7f7f7);
+            width: 100%;
+            font-size: @baseFontSize - 2;
+            font-family: @baseFontFamily;
+            background-color: darken(#fff, 1%);
+            border: 1px solid #b6b6b6;
+            margin-bottom: 10px;
+            padding: 7px 11px;
+        }
+
+        // Sign Up button
+        .btn {
+            float: right;
+            margin-bottom: 15px;
+        }
+    }
+}
+
+// 600px devices and up
+// -------------------------
+@media only screen and (min-width: 600px) {
+
+    .sidebar {
+        .clearfix;
+
+        // Latest News module
+        .latest-news {
+            width: 290px;
+            float: left;
+            margin-right: 20px;
+        }
+
+        // Newsletter Sign Up module
+        .newsletter {
+            width: 290px;
+            float: right;
+        }
+    }
+}
+
+// 950px devices and up
+// -------------------------
+@media only screen and (min-width: 950px) {
+
+    .sidebar {
+        width: 330px;
+        float: right;
+
+        // Latest News module
+        .latest-news {
+            width: auto;
+            float: none;
+            margin-right: 0;
+        }
+
+        // Newsletter Sign Up module
+        .newsletter {
+            width: auto;
+            float: none;
+        }
+    }
+}

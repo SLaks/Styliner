@@ -1,0 +1,101 @@
+// Base styles
+// -------------------------
+
+// Apply a natural box layout model to all elements
+* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html,
+button,
+input,
+select,
+textarea {
+    color: @textColor;
+}
+
+body {
+    color: @textColor;
+    font-size: @baseFontSize;
+    font-family: @baseFontFamily;
+    line-height: @baseLineHeight;
+    background-color: @bodyBackground;
+}
+
+// Links
+a {
+    color: @linkColor;
+
+    &:hover {
+        color: @linkColorHover;
+    }
+
+    &:visited {
+        color: @linkColorVisited;
+    }
+}
+
+// Selection highlight
+::-moz-selection {
+    background: @selectionHightlightColor;
+    text-shadow: none;
+}
+
+::selection {
+    background: @selectionHightlightColor;
+    text-shadow: none;
+}
+
+// Remove the gap between images and the bottom of their containers: h5bp.com/i/440
+img {
+    vertical-align: middle;
+}
+
+// Remove default fieldset styles
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+// Allow only vertical resizing of textareas
+textarea {
+    resize: vertical;
+}
+
+// Remove margin and padding from nav ul/ols
+nav {
+
+    ul,
+    ol {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+// Wrapper
+.wrap {}
+
+// 600px devices and up
+// -------------------------
+@media only screen and (min-width: 600px) {
+
+    // Wrapper
+    .wrap {
+        width: 600px;
+        margin: auto auto 30px;
+    }
+}
+
+// 950px devices and up
+// -------------------------
+@media only screen and (min-width: 950px) {
+
+    // Wrapper
+    .wrap {
+        .clearfix;
+        width: 950px;
+    }
+}
