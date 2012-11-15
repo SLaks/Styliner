@@ -52,7 +52,8 @@ var server = new capsela.Server(8774)
 						return qfs.read(filePath);
 					})
 					.then(function (source) {
-						return styliner.processHTML(source);
+						// Pass the directory containing the file for relative paths.
+						return styliner.processHTML(source, qfs.directory(filePath));
 					})
 					.then(function (final) {
 						return new capsela.Response(
