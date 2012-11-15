@@ -69,9 +69,14 @@ Styliner.prototype.getStylesheet = function (path) {
 	if (!Styliner.styleFormats.hasOwnProperty(format))
 		throw new Error("'" + path + "' is of unsupported format " + format);
 
-	var promise = qfs.read(qfs.join(this.baseDir, path))
-		.then(function (stream) { return stream.toString(); })
-		.then(Styliner.styleFormats[format])
+	var fullPath = qfs.join(this.baseDir, path);
+	var promise = qfs.read(fullPath)
+		.then(function (stream) {
+			return Styliner.styleFormats[format](
+				stream.toString(),
+				fullPath
+			);
+		})
 		.then(function (source) { return new ParsedStyleSheet(source); });
 
 	this.cachedFiles[path] = promise;
