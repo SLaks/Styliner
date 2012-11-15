@@ -14,9 +14,10 @@ var ParsedStyleSheet = require('./ParsedStyleSheet');
  * @class Styliner
  * @constructor
  */
-function Styliner(baseDir) {
+function Styliner(baseDir, options) {
 	this.baseDir = baseDir;
 	this.cachedFiles = {};
+	this.options = options || {};
 }
 
 /**
@@ -57,12 +58,13 @@ Styliner.prototype.getStylesheet = function (path) {
 	if (!Styliner.styleFormats.hasOwnProperty(format))
 		throw new Error("'" + path + "' is of unsupported format " + format);
 
+	var self = this;
 	var fullPath = qfs.join(this.baseDir, path);
 	var promise = qfs.read(fullPath)
 		.then(function (stream) {
 			return Styliner.styleFormats[format](
 				stream.toString(),
-				fullPath
+				fullPath, self.options
 			);
 		})
 		.then(function (source) { return new ParsedStyleSheet(source, fullPath); });

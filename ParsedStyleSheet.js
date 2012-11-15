@@ -11,9 +11,15 @@ var winston = require('winston');
  * @class ParsedStyleSheet
  * @constructor
  */
-function ParsedStyleSheet(source, fullPath) {
-	this.complexSource = source;
+function ParsedStyleSheet(source, fullPath, options) {
+	// Contains the CSS source that cannot be inlined and must be emitted in a <style> tag.
+	// This is used a a string builder to avoid costly string concatenations.
+	this.sourceBuilder = [];
+
+	// Contains the parsed rules that can be inlined into the document.
 	this.rules = [];
+
+	this.options = options;
 
 	// Expose the folder to this.createParser()
 	this.folder = path.dirname(fullPath);
@@ -25,11 +31,13 @@ function ParsedStyleSheet(source, fullPath) {
 	winston.verbose("Finished parsing " + fullPath);
 
 	delete this.folder;
+
+	this.complexSource = this.sourceBuilder.join('');
 }
 
 ParsedStyleSheet.prototype.createParser = function () {
 	var self = this;
-	var parser = new cssParser.Parser({ starHack: true, underscoreHack: true });
+	var parser = new cssParser.Parser({ starHack: true, underscoreHack: true, ieFilters: true });
 
 	parser.addListener('import', function (e) {
 		// If we encounter an imported file, parse it into our existing instance
@@ -43,6 +51,8 @@ ParsedStyleSheet.prototype.createParser = function () {
 		nestedParser.parse(fs.readFileSync(fullImportPath));
 		winston.verbose("Finished parsing imported file  " + fullImportPath);
 	});
+
+	//TODO: Log error events with line and message
 
 	//#region Read rules
 	var currentPropertySet = null;
@@ -64,15 +74,70 @@ ParsedStyleSheet.prototype.createParser = function () {
 		// Each rule can have multiple comma-separated Selectors.
 		// In these cases, I create a separate rule for each one,
 		// each referencing the same properties array.
-		self.rules.push.apply(self.rules, e.selectors.map(function (s) {
-			return new Rule(s, currentPropertySet);
-		}));
+
+		for (var i = 0; i < e.selectors.length; i++) {
+			var rule = new Rule(e.selectors[i], currentPropertySet);
+
+			if (isDynamic(e.selectors[i]))
+				self.sourceBuilder.push(rule.toString(self.options.compact));
+			else
+				self.rules.push(rule);
+		}
 		currentPropertySet = null;
 	});
 	//#endregion
 
 	return parser;
 };
+
+var dynamicPseudos = {
+	// Allow selectors to specify that they need Javascript enabled
+	".js": true,	
+
+	// Form element selectors
+	":checked": true,
+	":enabled": true,
+	":disabled": true,
+	":indeterminate": true,
+
+	":default": true,
+
+	":valid": true,
+	":invalid": true,
+	":in-range": true,
+	":out-of-range": true,
+	":required": true,
+	":optional": true,
+	":read-only": true,
+	":read-write": true,
+
+	// Link state selectors
+	":visited": true,
+	":active": true,
+	":hover": true,
+	":focus": true,
+	":target": true,
+
+	":first-line": true,
+	":first-letter": true,
+	":before": true,
+	":after": true
+};
+/**
+ * Checks whether a parsed Selector instance contains complex selector parts that cannot be evaluated in advance.
+ * (eg, ::after, :hover, :target)
+ */
+function isDynamic(selector) {
+	return selector.parts.some(function (part) {
+		// Skip combinators, which are never dynamic
+		return part instanceof cssParser.SelectorSubPart 
+			&& part.modifiers.some(function (part) {
+				//TODO: Recurse into :not()
+				return dynamicPseudos.hasOwnProperty(part.text)
+					|| /^::/.test(part.text)	// All psuedo-elements are dynamic
+		});
+	});
+}
 
 function Rule(s, properties) {
 	this.selectorText = s.text;
@@ -110,6 +175,7 @@ function Property(ev) {
 	this.value = ev.value.text;
 	this.important = ev.important;
 }
+// TODO: Image urls
 Property.prototype.toString = function (compact) {
 	if (compact)
 		return this.name + ":" + this.value + (this.important ? "!important" : "");
