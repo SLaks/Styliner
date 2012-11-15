@@ -1,4 +1,16 @@
-﻿@import url('imported.css');
+﻿@import url('bad-import.css');
+@import url('imported.css');
+
 h1 {
 	color: green;
+}
+
+h3 {
+	color: pink;
+}
+
+a b c + d > e[f="g"] h1:first-child j:nth-child(2n+1), div span {
+	-moz-box-shadow: 2px 2px;
+	-webkit-box-shadow: 2px 2px;
+	box-shadow: 2px 2px;
 }
