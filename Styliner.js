@@ -108,6 +108,7 @@ function applyElements(doc, rules, options) {
 
 	var styleSource = [];
 	//TODO: Populate from strings & non-static rules
+	//TODO: Add newlines after rules if !options.compact
 	styleSource = rules;	
 
 	appendStyleSource(doc, styleSource, options);

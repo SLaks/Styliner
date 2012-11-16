@@ -113,7 +113,7 @@ ParsedStyleSheet.prototype.createParser = function () {
 		// I don't combine the dynamic ones because each selector
 		// may overlap different static selectors for importance.
 		// (static selectors don't end up in the HTML anyway)
-		self.elements.push.apply(e.selectors.map(function (s) {
+		self.elements.push.apply(self.elements, e.selectors.map(function (s) {
 			return new Rule(s, currentPropertySet, inDynamicContext);
 		}));
 
