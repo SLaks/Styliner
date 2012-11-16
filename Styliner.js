@@ -9,7 +9,12 @@ var ParsedStyleSheet = require('./ParsedStyleSheet');
 
 /**
  * Creates a Styliner instances that reads CSS & LESS files from the specified base directory.
- * @param {String}	baseDir	The base directory that CSS paths are relative to.
+ * @param {String}	baseDir		The base directory that CSS paths are relative to.
+ * @param {Object}	[options]	An optional hash of options to configure this object.
+ * The following options are supported (all options default to false):
+ *  compact: true		Minify all output
+ *	noCSS: true			Don't emit <style> tags for rules that cannot be inlined
+ *	fixYahooMQ: true	Add an attribute/ID selector to all rules in media queries to fix a bug in Yahoo Mail.
  *
  * @class Styliner
  * @constructor
@@ -130,6 +135,7 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 	stylesheetPaths = stylesheetPaths || [];
 
 	var doc = cheerio.load(source);
+	//TODO: Handle fixYahooMQ: true by adding an ID to the <html> element
 
 	var stylesheetHrefs = doc('link[rel^="stylesheet"]')
 		.remove()
