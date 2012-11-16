@@ -12,12 +12,12 @@ var winston = require('winston');
  * @constructor
  */
 function ParsedStyleSheet(source, fullPath, options) {
-	// Contains the CSS source that cannot be inlined and must be emitted in a <style> tag.
-	// This is used a a string builder to avoid costly string concatenations.
-	this.sourceBuilder = [];
-
-	// Contains the parsed rules that can be inlined into the document.
-	this.rules = [];
+	// Contains all elements found in the stylesheet.  This array will hold
+	// strings for literal CSS source that isn't a rule (eg, a font-face or
+	// keyframes declaration, as well as the opening and closing lines of a
+	// media query). All rules (even those inside of media queries) will be
+	// parsed into Rule objects in this array.
+	this.elements = [];
 
 	this.options = options;
 
@@ -31,10 +31,13 @@ function ParsedStyleSheet(source, fullPath, options) {
 	winston.verbose("Finished parsing " + fullPath);
 
 	delete this.folder;
-
-	this.complexSource = this.sourceBuilder.join('');
 }
 
+/**
+ * Creates a parserlib CSS parser instance that parses into this
+ * instance's state.
+ * This is called recursively to handle @import-ed CSS files.
+ */
 ParsedStyleSheet.prototype.createParser = function () {
 	var self = this;
 	var parser = new cssParser.Parser({ starHack: true, underscoreHack: true, ieFilters: true });
@@ -47,12 +50,17 @@ ParsedStyleSheet.prototype.createParser = function () {
 		var fullImportPath = path.join(self.folder, e.uri);
 		var nestedParser = self.createParser();
 
-		winston.verbose("Started parsing imported file  " + fullImportPath);
+		winston.verbose("Started parsing imported file " + fullImportPath);
 		nestedParser.parse(fs.readFileSync(fullImportPath));
-		winston.verbose("Finished parsing imported file  " + fullImportPath);
+		winston.verbose("Finished parsing imported file " + fullImportPath);
 	});
 
 	//TODO: Log error events with line and message
+	//TODO: Handle fixYahooMQ: true by modifying all selectors when inside media queries
+
+	// True if we're in the middle of a media query, in which
+	// case all selectors are at least soft-dynamic.
+	var inDynamicContext = false;
 
 	//#region Read rules
 	var currentPropertySet = null;
@@ -65,24 +73,27 @@ ParsedStyleSheet.prototype.createParser = function () {
 			// Proceed anyway
 		}
 
-		if (!currentPropertySet) return;
-		currentPropertySet.push(new Property(e));
+		if (currentPropertySet)
+			currentPropertySet.push(new Property(e));
+		else {
+			// If we're not inside a rule (eg, properties in a keyframes declaration), 
+			// add the property text directly to the output source.
+			//TODO: Handle options.compact
+			self.elements.push(e.property.toString());
+		}
 	});
 	parser.addListener('endrule', function (e) {
-		if (!currentPropertySet) return;
 
 		// Each rule can have multiple comma-separated Selectors.
 		// In these cases, I create a separate rule for each one,
 		// each referencing the same properties array.
+		// I don't combine the dynamic ones because each selector
+		// may overlap different static selectors for importance.
+		// (static selectors don't end up in the HTML anyway)
+		self.elements.push.apply(e.selectors.map(function (s) {
+			return new Rule(s, currentPropertySet, inDynamicContext);
+		}));
 
-		for (var i = 0; i < e.selectors.length; i++) {
-			var rule = new Rule(e.selectors[i], currentPropertySet);
-
-			if (isDynamic(e.selectors[i]))
-				self.sourceBuilder.push(rule.toString(self.options.compact));
-			else
-				self.rules.push(rule);
-		}
 		currentPropertySet = null;
 	});
 	//#endregion
@@ -90,59 +101,124 @@ ParsedStyleSheet.prototype.createParser = function () {
 	return parser;
 };
 
+//#region Check for dynamic selectors
+
+// This hash contains all pseudo-classes & elements that cannot be
+// applied statically.  Any CSS rules that contain these selectors
+// will be left as-is in a <style> tag.
+// The value of each property in the hash indicates whether it's a
+// pseudo-element (true) or pseudo-class (false).  CSS rules which
+// contain pseudo-elements do not need to be accounted for in when
+// calculating the cascade (since they will never be overridden by
+// inline styles).  Rules with pseudo-classes may need !important,
+// to override earlier rules that were inlined on the same element
 var dynamicPseudos = {
-	// Allow selectors to specify that they need Javascript enabled
-	".js": true,	
+	//Allow selectors to specify that they need Javascript enabled
+	".js": false,
 
 	// Form element selectors
-	":checked": true,
-	":enabled": true,
-	":disabled": true,
-	":indeterminate": true,
+	":checked": false,
+	":enabled": false,
+	":disabled": false,
+	":indeterminate": false,
 
-	":default": true,
+	":default": false,
 
-	":valid": true,
-	":invalid": true,
-	":in-range": true,
-	":out-of-range": true,
-	":required": true,
-	":optional": true,
-	":read-only": true,
-	":read-write": true,
+	":valid": false,
+	":invalid": false,
+	":in-range": false,
+	":out-of-range": false,
+	":required": false,
+	":optional": false,
+	":read-only": false,
+	":read-write": false,
 
 	// Link state selectors
-	":visited": true,
-	":active": true,
-	":hover": true,
-	":focus": true,
-	":target": true,
+	":visited": false,
+	":active": false,
+	":hover": false,
+	":focus": false,
+	":target": false,
 
+	// Pseudo-elements
 	":first-line": true,
 	":first-letter": true,
 	":before": true,
 	":after": true
 };
 /**
- * Checks whether a parsed Selector instance contains complex selector parts that cannot be evaluated in advance.
+ * Sets the isDynamic and staticSelector properties of a rule, by checking 
+ * whether its Selector instance contains complex selector parts that can't
+ * be evaluated in advance.
  * (eg, ::after, :hover, :target)
  */
-function isDynamic(selector) {
-	return selector.parts.some(function (part) {
-		// Skip combinators, which are never dynamic
-		return part instanceof cssParser.SelectorSubPart 
-			&& part.modifiers.some(function (part) {
-				//TODO: Recurse into :not()
-				return dynamicPseudos.hasOwnProperty(part.text)
-					|| /^::/.test(part.text)	// All psuedo-elements are dynamic
-		});
-	});
-}
+function checkDynamic(rule, selector) {
+	for (var p = 0; p < selector.parts.length; p++) {
+		var part = selector.parts[p];
 
-function Rule(s, properties) {
+		if (rule.staticSelector.length)
+			rule.staticSelector.push(' ');
+
+		// Skip combinators, which are never dynamic
+		if (!part instanceof cssParser.SelectorSubPart) {
+			rule.staticSelector.push(part.text);
+			continue;
+		}
+
+		for (var e = 0; e < part.modifiers.length; e++) {
+			checkDynamicElement(rule, part.modifiers[e]);
+			// If we found a hard-dynamic selector, stop immediately
+			if (rule.staticSelector === null)
+				return;
+		}
+	}
+}
+function checkDynamicElement(rule, elem) {
+	if (/^::/.test(elem.text)) {
+		// All pseudo-elements are hard-dynamic
+		rule.isDynamic = true;
+		rule.staticSelector = null;
+	} else if (elem.type === "not") {
+		rule.staticSelector.push(":not(");
+		for (var i = 0; i < elem.args.length; i++) {
+			checkDynamicElement(elem.args[i]);
+		}
+		rule.staticSelector.push(")");	//:not() arguments can never be hard-dynamic
+
+	} else if (dynamicPseudos.hasOwnProperty(elem.text)) {
+		rule.isDynamic = true;
+		if (dynamicPseudos[elem.text])	//If it's hard-dynamic
+			rule.staticSelector = null;
+
+	} else {
+		// If the modifier isn't dynamic, add it to the static selector.
+		rule.staticSelector.push(elem.text);
+	}
+}
+//#endregion
+
+
+function Rule(s, properties, isDynamicContext) {
 	this.selectorText = s.text;
 	this.specificity = s.specificity;
 	this.properties = properties;
+
+	//TODO: Create compactSelectorText without whitespace.
+
+	// True if this selector cannot be evaluated in advance
+	this.isDynamic = !!isDynamicContext;
+
+	// A statically-applicable selector that will match all
+	// elements that might be matched by the actual dynamic
+	// selector, or null if the dynamic selector contains a
+	// pseudo-element (a hard-dynamic selector).
+	// If this is non-null, the rules in the selector might
+	// need !important to preserve cascade. (at application
+	// time)
+	this.staticSelector = [];	//StringBuilder
+	checkDynamic(this, s);
+	if (this.staticSelector !== null)
+		this.staticSelector = this.staticSelector.join('');
 }
 Rule.prototype.toString = function (compact) {
 	var retVal = [];

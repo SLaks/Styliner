@@ -81,24 +81,6 @@ Styliner.prototype.getStylesheet = function (path) {
 };
 
 
-function appendStyleSource(doc, sheets) {
-	/// <summary>Inserts non-trivial CSS source (eg, media queries) from a collection of parsed stylesheets into a style tag.</summary>
-	var styleSource = sheets.map(function (s) { return s.complexSource; })
-							.join('');
-	if (styleSource) {
-		var head = doc('head');
-		if (!head)
-			head = doc.root().append('<head />');
-		head.append('<style>\n\t\t' + styleSource + '</style>');
-	}
-}
-
-function applyRules(doc, rules) {
-	/// <summary>Applies a collection of parsed CSS rules to an HTML document.</summary>
-	if (!rules.length)
-		return;
-	//TODO: Apply rules as per specificity
-}
 
 /**
  * Asynchronously parses all CSS and LESS source files in the base directory.
@@ -116,6 +98,35 @@ Styliner.prototype.cacheAll = function () {
 			}));
 		});
 };
+function applyElements(doc, rules, options) {
+	/// <summary>Applies a collection of parsed CSS rules and sources to an HTML document.</summary>
+	if (!rules.length)
+		return;
+
+	//TODO: Apply non-dynamic rules as per specificity
+	//TODO: Add importance to dynamic rules
+
+	var styleSource = [];
+	//TODO: Populate from strings & non-static rules
+	styleSource = rules;	
+
+	appendStyleSource(doc, styleSource, options);
+}
+function appendStyleSource(doc, styleSource, options) {
+	/// <summary>Appends an array of non-static CSS to a document.</summary>
+	var head = doc('head');
+	if (!head)
+		head = doc.root().append('<head />');
+
+	styleSource = styleSource.join("");
+	if (options.compact)
+		styleSource = "<style>" + styleSource + "</style>";
+	else
+		styleSource = "<style>\n" + styleSource + "\n</style>";
+
+	head.append(styleSource);
+}
+
 
 /**
  * Asynchronously parses an HTML document and inlines styles as appropriate.
@@ -161,10 +172,8 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 			}))
 	);
 	return stylesheetsLoaded.then(function (sheets) {
-		appendStyleSource(doc, sheets);
-
-		var allRules = Array.prototype.concat.apply([], sheets.map(function (s) { return s.rules; }));
-		applyRules(doc, allRules);
+		var allRules = Array.prototype.concat.apply([], sheets.map(function (s) { return s.elements; }));
+		applyElements(doc, allRules, self.options);
 		return doc.html();
 	});
 };
