@@ -72,7 +72,9 @@ Styliner.prototype.getStylesheet = function (path) {
 				fullPath, self.options
 			);
 		})
-		.then(function (source) { return new ParsedStyleSheet(source, fullPath); });
+		.then(function (source) {
+			return new ParsedStyleSheet(source, fullPath, self.options);
+		});
 
 	this.cachedFiles[path] = promise;
 	return promise;
@@ -155,7 +157,7 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 			})
 			.concat(doc('style').remove().map(function () {
 				var source = cheerio(this).text();
-				return new ParsedStyleSheet(source, qfs.join(self.baseDir, relativePath, '-html-'));
+				return new ParsedStyleSheet(source, qfs.join(self.baseDir, relativePath, '-html-'), self.options);
 			}))
 	);
 	return stylesheetsLoaded.then(function (sheets) {
