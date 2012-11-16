@@ -4,7 +4,12 @@ var capsela = require('capsela');
 var Styliner = require('..');
 require('../Styliner-less');
 
-var styliner = new Styliner(qfs.join(__dirname, 'TestFiles/'));
+var commander = require('commander');
+commander.option('-c, --compact', "Minify generated HTML.");
+commander.parse(process.argv);
+
+
+var styliner = new Styliner(qfs.join(__dirname, 'TestFiles/'), { compact: commander.compact });
 
 var server = new capsela.Server(8774)
 	.addStage(

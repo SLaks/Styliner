@@ -31,6 +31,7 @@
     "winston": "~0.6.2"
   },
   "devDependencies": {
+    "commander": "~1.0.5",
     "capsela": "git://github.com/Unroll-Me/capsela.git"
   }
 }
