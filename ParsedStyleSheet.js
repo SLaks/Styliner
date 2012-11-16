@@ -62,6 +62,29 @@ ParsedStyleSheet.prototype.createParser = function () {
 	// case all selectors are at least soft-dynamic.
 	var inDynamicContext = false;
 
+	// #region Media Queries
+	parser.addListener('startmedia', function (e) {
+		inDynamicContext = true;
+		self.elements.push("@media ");
+
+		self.elements.push(e.media.join(self.options.compact ? ',' : ', ').trim());
+
+		if (self.options.compact)
+			self.elements.push("{");
+		else
+			self.elements.push(" {\n");
+	});
+
+	parser.addListener('endmedia', function (e) {
+		inDynamicContext = false;
+
+		if (self.options.compact)
+			self.elements.push("}");
+		else
+			self.elements.push("}\n");
+	});
+	// #endregion
+
 	//#region Read rules
 	var currentPropertySet = null;
 	parser.addListener('startrule', function (e) {
