@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <title>CSS @import test</title>
+        <link href="import-test.css" rel="stylesheet" />
+        <link href="importance.css" rel="stylesheet" />
+    </head>
+
+    <body style="color: red;" class="js">
+        <h1>This should be green</h1>
+        <h2>This should also be green</h2>
+        <h3>This too should be green</h3>
+
+        <p class="ImportantSequence">Even this should be green</p>
+        <p class="MediaSequence">Even this should be green</p>
+        <p class="InvertedSequence">Even this should be green</p>
+    </body>
+
+</html>

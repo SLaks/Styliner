@@ -1,0 +1,10 @@
+﻿@import url('bad-import.css');
+@import url('imported.css');
+
+h1 {
+	color: green;
+}
+
+h3 {
+	color: pink;
+}

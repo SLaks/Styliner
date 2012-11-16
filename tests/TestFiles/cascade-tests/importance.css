@@ -1,0 +1,30 @@
+﻿.InvertedSequence {
+	color: pink;
+}
+
+@media all {
+	.InvertedSequence {
+		color: green;
+	}
+}
+
+@media all {
+	.MediaSequence {
+		color: pink;
+	}
+}
+
+.MediaSequence {
+	color: green;
+}
+
+
+@media all {
+	.ImportantSequence {
+		color: green !important;
+	}
+}
+
+.ImportantSequence {
+	color: pink;
+}
