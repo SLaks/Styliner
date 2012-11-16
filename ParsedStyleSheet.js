@@ -107,6 +107,16 @@ ParsedStyleSheet.prototype.createParser = function () {
 	parser.addListener('endpage', closeBlock);
 	//#endregion
 
+	//#region @font-face
+	parser.addListener('startfontface', function (e) {
+		self.elements.push("@font-face");
+
+		openBlock();
+	});
+
+	parser.addListener('endfontface', closeBlock);
+	//#endregion
+
 	//#region Read rules
 	var currentPropertySet = null;
 	parser.addListener('startrule', function (e) {
@@ -124,6 +134,8 @@ ParsedStyleSheet.prototype.createParser = function () {
 			// If we're not inside a rule (eg, properties in a keyframes declaration), 
 			// add the property text directly to the output source.
 			self.elements.push(new Property(e).toString(self.options.compact) + ";");
+			if (!self.options.compact)
+				self.elements.push('\n');
 		}
 	});
 	parser.addListener('endrule', function (e) {
