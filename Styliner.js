@@ -80,8 +80,6 @@ Styliner.prototype.getStylesheet = function (path) {
 	return promise;
 };
 
-
-
 /**
  * Asynchronously parses all CSS and LESS source files in the base directory.
  * Call this method to pre-populate the cache for maximum performance.
@@ -98,6 +96,18 @@ Styliner.prototype.cacheAll = function () {
 			}));
 		});
 };
+
+function parseDataUrl(url) {
+	var parsed = /data:([a-zA-Z]+\/[a-zA-Z-]+)(;base64)?,(.*)/.exec(url);
+	if (!parsed)
+		return null;
+
+	if (parsed[2])
+		return new Buffer(parsed[3], 'base64').toString('utf-8');
+	else
+		return decodeURIComponent(parsed[3]);
+}
+
 function applyElements(doc, rules, options) {
 	/// <summary>Applies a collection of parsed CSS rules and sources to an HTML document.</summary>
 	if (!rules.length)
@@ -152,25 +162,40 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 	var doc = cheerio.load(source);
 	//TODO: Handle fixYahooMQ: true by adding an ID to the <html> element
 
-	var stylesheetHrefs = doc('link[rel^="stylesheet"]')
+	var stylesheetHrefs = doc('link[rel~="stylesheet"]')
 		.remove()
 		.map(function (index, elem) {
 			var href = cheerio(elem).attr('href');
-			return qfs.join(relativePath, href);
+			if (/^[a-z]+:/i.test(href))
+				return href;
+			else
+				return qfs.join(relativePath, href);
 		});
 
 	var self = this;
+
+	var htmlPath = qfs.join(self.baseDir, relativePath, '-html-');
+
 	var stylesheetsLoaded = Q.all(
 		stylesheetHrefs.concat(stylesheetPaths)
 			.map(function (path) {
-				path = qfs.join(self.baseDir, path);
 
-				return qfs.canonical(path)
-						  .then(self.getStylesheet.bind(self));
+				if (!/^[a-z]+:/i.test(path)) {
+					// If it doesn't have a protocol, assume it's a relative path.
+					path = qfs.join(self.baseDir, path);
+
+					return qfs.canonical(path)
+							  .then(self.getStylesheet.bind(self));
+				} else if (/^data:/.test(path)) {
+					return new ParsedStyleSheet(parseDataUrl(path), htmlPath, self.options);
+				} else {
+					//TODO: Download source
+					throw new Error("I haven't written an HTTP client yet; cannot download stylesheet at " + path);
+				}
 			})
 			.concat(doc('style').remove().map(function () {
 				var source = cheerio(this).text();
-				return new ParsedStyleSheet(source, qfs.join(self.baseDir, relativePath, '-html-'), self.options);
+				return new ParsedStyleSheet(source, htmlPath, self.options);
 			}))
 	);
 	return stylesheetsLoaded.then(function (sheets) {
@@ -179,5 +204,7 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 		return doc.html();
 	});
 };
+
+
 
 module.exports = Styliner;
