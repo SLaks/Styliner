@@ -183,10 +183,13 @@ function checkDynamic(rule, selector) {
 			rule.staticSelector.push(' ');
 
 		// Skip combinators, which are never dynamic
-		if (!part instanceof cssParser.SelectorSubPart) {
+		if (!(part instanceof cssParser.SelectorSubPart)) {
 			rule.staticSelector.push(part.text);
 			continue;
 		}
+
+		if (part.elementName !== null)
+			rule.staticSelector.push(part.elementName.text);
 
 		for (var e = 0; e < part.modifiers.length; e++) {
 			checkDynamicElement(rule, part.modifiers[e]);
@@ -204,7 +207,7 @@ function checkDynamicElement(rule, elem) {
 	} else if (elem.type === "not") {
 		rule.staticSelector.push(":not(");
 		for (var i = 0; i < elem.args.length; i++) {
-			checkDynamicElement(elem.args[i]);
+			checkDynamicElement(rule, elem.args[i]);
 		}
 		rule.staticSelector.push(")");	//:not() arguments can never be hard-dynamic
 

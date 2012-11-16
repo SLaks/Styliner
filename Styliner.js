@@ -109,7 +109,7 @@ function applyElements(doc, rules, options) {
 	var styleSource = [];
 	//TODO: Populate from strings & non-static rules
 	//TODO: Add newlines after rules if !options.compact
-	styleSource = rules;	
+	styleSource = rules;
 
 	appendStyleSource(doc, styleSource, options);
 }
@@ -119,7 +119,8 @@ function appendStyleSource(doc, styleSource, options) {
 	if (!head)
 		head = doc.root().append('<head />');
 
-	styleSource = styleSource.join("");
+	styleSource = styleSource.map(function (o) { return o.toString(options.compact); })
+							 .join("");
 	if (options.compact)
 		styleSource = "<style>" + styleSource + "</style>";
 	else
