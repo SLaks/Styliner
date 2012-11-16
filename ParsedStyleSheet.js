@@ -55,6 +55,21 @@ ParsedStyleSheet.prototype.createParser = function () {
 		winston.verbose("Finished parsing imported file " + fullImportPath);
 	});
 
+	//#region Output Helpers
+	var openBlock = function () {
+		if (self.options.compact)
+			self.elements.push("{");
+		else
+			self.elements.push(" {\n");
+	};
+	var closeBlock = function () {
+		if (self.options.compact)
+			self.elements.push("}");
+		else
+			self.elements.push("}\n");
+	};
+	//#endregion
+
 	//TODO: Log error events with line and message
 	//TODO: Handle fixYahooMQ: true by modifying all selectors when inside media queries
 
@@ -62,28 +77,35 @@ ParsedStyleSheet.prototype.createParser = function () {
 	// case all selectors are at least soft-dynamic.
 	var inDynamicContext = false;
 
-	// #region Media Queries
+	//#region Media Queries
 	parser.addListener('startmedia', function (e) {
 		inDynamicContext = true;
 		self.elements.push("@media ");
 
 		self.elements.push(e.media.join(self.options.compact ? ',' : ', ').trim());
-
-		if (self.options.compact)
-			self.elements.push("{");
-		else
-			self.elements.push(" {\n");
+		openBlock();
 	});
 
 	parser.addListener('endmedia', function (e) {
 		inDynamicContext = false;
-
-		if (self.options.compact)
-			self.elements.push("}");
-		else
-			self.elements.push("}\n");
+		closeBlock();
 	});
-	// #endregion
+	//#endregion
+
+	//#region @page
+	parser.addListener('startpage', function (e) {
+		self.elements.push("@page");
+
+		if (e.id)
+			self.elements.push(" ", e.id.toString());
+		if (e.pseudo)
+			self.elements.push(" ", e.pseudo.toString());
+
+		openBlock();
+	});
+
+	parser.addListener('endpage', closeBlock);
+	//#endregion
 
 	//#region Read rules
 	var currentPropertySet = null;
@@ -101,8 +123,7 @@ ParsedStyleSheet.prototype.createParser = function () {
 		else {
 			// If we're not inside a rule (eg, properties in a keyframes declaration), 
 			// add the property text directly to the output source.
-			//TODO: Handle options.compact
-			self.elements.push(e.property.toString());
+			self.elements.push(new Property(e).toString(self.options.compact) + ";");
 		}
 	});
 	parser.addListener('endrule', function (e) {
