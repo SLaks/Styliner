@@ -153,6 +153,10 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 				return qfs.canonical(path)
 						  .then(self.getStylesheet.bind(self));
 			})
+			.concat(doc('style').remove().map(function () {
+				var source = cheerio(this).text();
+				return new ParsedStyleSheet(source, qfs.join(self.baseDir, relativePath, '-html-'));
+			}))
 	);
 	return stylesheetsLoaded.then(function (sheets) {
 		appendStyleSource(doc, sheets);
