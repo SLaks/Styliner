@@ -97,8 +97,8 @@ Styliner.prototype.cacheAll = function () {
 		});
 };
 
-function parseDataUrl(url) {
-	var parsed = /data:([a-zA-Z]+\/[a-zA-Z-]+)(;base64)?,(.*)/.exec(url);
+function parseDataUri(uri) {
+	var parsed = /data:([a-zA-Z]+\/[a-zA-Z-]+)(;base64)?,(.*)/.exec(uri);
 	if (!parsed)
 		return null;
 
@@ -108,6 +108,21 @@ function parseDataUrl(url) {
 		return decodeURIComponent(parsed[3]);
 }
 
+function appendStyleSource(doc, styleSource, options) {
+	/// <summary>Appends an array of non-static CSS elements (strings and rules) to a document.</summary>
+	var head = doc('head');
+	if (!head)
+		head = doc.root().append('<head />');
+
+	styleSource = styleSource.map(function (o) { return o.toString(options.compact); })
+							 .join("");
+	if (options.compact)
+		styleSource = "<style>" + styleSource + "</style>";
+	else
+		styleSource = "<style>\n" + styleSource + "\n</style>";
+
+	head.append(styleSource);
+}
 function applyElements(doc, rules, options) {
 	/// <summary>Applies a collection of parsed CSS rules and sources to an HTML document.</summary>
 	if (!rules.length)
@@ -122,21 +137,6 @@ function applyElements(doc, rules, options) {
 	styleSource = rules;
 
 	appendStyleSource(doc, styleSource, options);
-}
-function appendStyleSource(doc, styleSource, options) {
-	/// <summary>Appends an array of non-static CSS to a document.</summary>
-	var head = doc('head');
-	if (!head)
-		head = doc.root().append('<head />');
-
-	styleSource = styleSource.map(function (o) { return o.toString(options.compact); })
-							 .join("");
-	if (options.compact)
-		styleSource = "<style>" + styleSource + "</style>";
-	else
-		styleSource = "<style>\n" + styleSource + "\n</style>";
-
-	head.append(styleSource);
 }
 
 
@@ -162,41 +162,71 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 	var doc = cheerio.load(source);
 	//TODO: Handle fixYahooMQ: true by adding an ID to the <html> element
 
-	var stylesheetHrefs = doc('link[rel~="stylesheet"]')
+	var stylesheets = doc('link[rel~="stylesheet"], style')
 		.remove()
 		.map(function (index, elem) {
+			if (elem.name === "style") {
+				return {
+					type: 'source',
+					text: cheerio(this).text()
+				};
+			}
+
 			var href = cheerio(elem).attr('href');
-			if (/^[a-z]+:/i.test(href))
-				return href;
-			else
-				return qfs.join(relativePath, href);
-		});
+			if (/^[a-z]+:/i.test(href)) {
+				return {
+					type: "absolute",
+					url: href
+				};
+			} else {
+				// If it doesn't have a protocol, assume it's a relative path.
+				// Normalize the path to match stylesheetPaths.
+				return {
+					type: "relative",
+					path: qfs.join(relativePath, href)
+				};
+			}
+		}).concat(
+			stylesheetPaths.map(function (p) {
+				return { type: "relative", path: p };
+			})
+		);
 
 	var self = this;
 
 	var htmlPath = qfs.join(self.baseDir, relativePath, '-html-');
 
 	var stylesheetsLoaded = Q.all(
-		stylesheetHrefs.concat(stylesheetPaths)
-			.map(function (path) {
+		stylesheets.map(function (ss) {
+			// First, take all stylesheets that give us new source
+			// (as opposed to cacheable local paths) and turn them
+			// into promises.
 
-				if (!/^[a-z]+:/i.test(path)) {
-					// If it doesn't have a protocol, assume it's a relative path.
-					path = qfs.join(self.baseDir, path);
-
-					return qfs.canonical(path)
-							  .then(self.getStylesheet.bind(self));
-				} else if (/^data:/.test(path)) {
-					return new ParsedStyleSheet(parseDataUrl(path), htmlPath, self.options);
-				} else {
-					//TODO: Download source
-					throw new Error("I haven't written an HTTP client yet; cannot download stylesheet at " + path);
+			if (ss.type === "absolute") {
+				if (/^data:/.test(ss.url))
+					return { type: "source", text: qfs.resolve(parseDataUri(ss.url)) };
+				else {
+					//TODO: Download source using q-http
+					throw new Error("I haven't written an HTTP client yet; cannot download stylesheet at " + ss.url);
 				}
-			})
-			.concat(doc('style').remove().map(function () {
-				var source = cheerio(this).text();
-				return new ParsedStyleSheet(source, htmlPath, self.options);
-			}))
+			} else
+				return ss;
+		}).map(function (ss) {
+			if (ss.type === "source") {
+				// source-type stylesheets can be promises (external URLs)
+				// or raw strings (<style> tags or data: URLs)
+				return Q.when(ss.text, function (source) {
+					return new ParsedStyleSheet(source, htmlPath, self.options);
+				});
+			} else if (ss.type === "relative") {
+				var path = qfs.join(self.baseDir, ss.path);
+
+				return qfs.canonical(path)
+						  .then(self.getStylesheet.bind(self));
+			} else {
+				throw new Error("Unrecognized stylesheet " + JSON.stringify(ss));
+			}
+		})
 	);
 	return stylesheetsLoaded.then(function (sheets) {
 		var allRules = Array.prototype.concat.apply([], sheets.map(function (s) { return s.elements; }));
@@ -204,7 +234,6 @@ Styliner.prototype.processHTML = function (source, relativePath, stylesheetPaths
 		return doc.html();
 	});
 };
-
 
 
 module.exports = Styliner;
