@@ -44,7 +44,7 @@ var server = new capsela.Server(8774)
 		})
 	.addStage(function (request) {
 		return this.pass(request).then(function (response) {
-			if (response.getContentType() === "text/html")
+			if (response && response.getContentType() === "text/html")
 				return StylinerResponse.create(response);
 			else
 				return response;
