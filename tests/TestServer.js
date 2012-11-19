@@ -1,4 +1,6 @@
-﻿var Q = require('q');
+﻿/*jshint node: true, camelcase: true, eqeqeq: true, forin: true, immed: true, latedef: true, newcap: true, noarg: true, undef: true, globalstrict: true*/
+"use strict";
+var Q = require('q');
 var qfs = require('q-fs');
 var capsela = require('capsela');
 var Styliner = require('..');
@@ -20,6 +22,27 @@ var styliner = new Styliner(
 		}
 	}
 );
+
+var StylinerResponse = capsela.Response.extend({
+	create: function (filePath) {
+		if (filePath instanceof capsela.FileResponse)
+			filePath = filePath.path;
+
+		return qfs.read(filePath)
+			.then(function (source) {
+				// Pass the directory containing the file for relative paths.
+				return styliner.processHTML(source, qfs.directory(filePath));
+			})
+			.then(function (final) {
+				return new StylinerResponse(
+					200,
+					{},
+					final,
+					"text/html"
+				);
+			});
+	}
+});
 
 var server = new capsela.Server(8774)
 	.addStage(
@@ -62,26 +85,6 @@ var server = new capsela.Server(8774)
 	})
 	.addStage(new capsela.stages.FileServer("/", styliner.baseDir, "index.html"));
 
-var StylinerResponse = capsela.Response.extend({
-	create: function (filePath) {
-		if (filePath instanceof capsela.FileResponse)
-			filePath = filePath.path;
-
-		return qfs.read(filePath)
-			.then(function (source) {
-				// Pass the directory containing the file for relative paths.
-				return styliner.processHTML(source, qfs.directory(filePath));
-			})
-			.then(function (final) {
-				return new StylinerResponse(
-					200,
-					{},
-					final,
-					"text/html"
-				);
-			});
-	}
-});
 
 server.start();
 console.log("Listening on port " + server.port);
