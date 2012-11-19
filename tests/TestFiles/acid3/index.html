@@ -140,7 +140,8 @@
  </style>
 
  <!-- part of the HTTP tests -->
- <link rel="stylesheet" href="empty.css"><!-- text/html file (should be ignored, <h1> will go red if it isn't) -->
+ <!-- SLaks: This test is not applicable when inlining stylesheets -->
+ <!--<link rel="stylesheet" href="empty.css"> text/html file (should be ignored, <h1> will go red if it isn't) -->
 
  <!-- the next five script blocks are part of one of the tests -->
  <script type="text/javascript">
@@ -158,7 +159,8 @@
 
  <!-- part of the JS regexp and \0 value tests test -->
  <script type="text/javascript">
-     var nullInRegexpArgumentResult = 0 < /script/.test('\0script') ? "passed" : "failed";
+     //SLaks: Changed to ascript to work around htmlparser2 bug
+     var nullInRegexpArgumentResult = 0 < /ascript/.test('\0ascript') ? "passed" : "failed";
  </script>
 
  <!-- main test body -->
