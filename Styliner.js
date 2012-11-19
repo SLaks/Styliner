@@ -6,6 +6,7 @@ var qfs = require('q-fs');
 var cheerio = require('cheerio');
 var ParsedStyleSheet = require('./ParsedStyleSheet');
 
+var noopUrlTransform = function (url) { return url; };
 
 /**
  * Creates a Styliner instances that reads CSS & LESS files from the specified base directory.
@@ -15,6 +16,9 @@ var ParsedStyleSheet = require('./ParsedStyleSheet');
  *  compact: true		Minify all output
  *	noCSS: true			Don't emit <style> tags for rules that cannot be inlined
  *	fixYahooMQ: true	Add an attribute/ID selector to all rules in media queries to fix a bug in Yahoo Mail.
+ *	urlPrefix: "dir/"	The path containing referenced URLs.  All non-absolute URLs in <a> tags, <img> tags, and stylesheets will have this path prepended.  For greater flexibility, pass a url() function instead.
+ *	url: function(path)	A function called to resolve URLs.  All non-absolute URLs in HTML or CSS will be replaced by the return value of this function.  
+						The function is passed the relative path to the file, and can return a promise or a string
  *
  * @class Styliner
  * @constructor
@@ -22,7 +26,11 @@ var ParsedStyleSheet = require('./ParsedStyleSheet');
 function Styliner(baseDir, options) {
 	this.baseDir = baseDir;
 	this.cachedFiles = {};
-	this.options = options || {};
+	this.options = options = options || {};
+
+	options.url = options.url
+		|| (options.urlPrefix && function (url) { return qfs.join(options.urlPrefix, url).replace(/\\/g, '/'); })
+		|| noopUrlTransform;
 }
 
 /**
@@ -149,7 +157,7 @@ function applyElements(doc, rules, options) {
  * Asynchronously parses an HTML document and inlines styles as appropriate.
  * 
  * @param {String}			source				The HTML source code to parse.
- * @param {String}			[relativePath]		The path to the directory containing the source file.  Relative paths to CSS files will be resolved from this path.  Defaults to (and relative to) the base directory. 
+ * @param {String}			[relativePath]		The path to the directory containing the source file.  Relative paths to CSS files and images will be resolved from this path.  Defaults to (and relative to) the base directory. 
  * @param {Array<String>}	[stylesheetPaths]	An optional list of relative paths to stylesheets to include with the document.
  *
  * @returns {Promise<String>} A promise for the inlined HTML source.
