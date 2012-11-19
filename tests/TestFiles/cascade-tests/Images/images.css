@@ -23,3 +23,7 @@
 		width: 200px;
 		height: 205px;
 	}
+
+p {
+	clear: both;
+}
