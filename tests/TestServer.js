@@ -91,7 +91,6 @@ var server = new capsela.Server(8774)
 			if (!response || !response.path)
 				return response;
 			var relative = path.relative(styliner.baseDir, response.path).replace('\\', '/');
-			console.log(relative);
 			if (contentTypeOverride.hasOwnProperty(relative))
 				response.setContentType(contentTypeOverride[relative]);
 			return response;
