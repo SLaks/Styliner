@@ -1,6 +1,7 @@
 ﻿/*jshint node: true, camelcase: true, eqeqeq: true, forin: true, immed: true, latedef: true, newcap: true, noarg: true, undef: true, globalstrict: true*/
 "use strict";
 var Q = require('q');
+var path = require('path');
 var qfs = require('q-fs');
 var capsela = require('capsela');
 var Styliner = require('..');
@@ -75,6 +76,27 @@ var server = new capsela.Server(8774)
 					return self.pass(request);
 			});
 		})
+	.addStage(function (request) {
+		var contentTypeOverride = {
+			"acid3/empty.css": 'text/html',
+			"acid3/support-b.png": 'text/html',
+			"acid3/empty.xml": 'application/xml',
+			"acid3/svg.xml": 'image/svg+xml',
+			"acid3/xhtml.1": 'text/xml',
+			"acid3/xhtml.2": 'text/xml',
+			"acid3/xhtml.3": 'text/xml'
+		};
+
+		return this.pass(request).then(function (response) {
+			if (!response || !response.path)
+				return response;
+			var relative = path.relative(styliner.baseDir, response.path).replace('\\', '/');
+			console.log(relative);
+			if (contentTypeOverride.hasOwnProperty(relative))
+				response.setContentType(contentTypeOverride[relative]);
+			return response;
+		});
+	})
 	.addStage(function (request) {
 		return this.pass(request).then(function (response) {
 			if (response && response.getContentType() === "text/html")
