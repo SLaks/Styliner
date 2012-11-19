@@ -9,7 +9,17 @@ commander.option('-c, --compact', "Minify generated HTML.");
 commander.parse(process.argv);
 
 
-var styliner = new Styliner(qfs.join(__dirname, 'TestFiles/'), { compact: commander.compact });
+var styliner = new Styliner(
+	qfs.join(__dirname, 'TestFiles/'),
+	{
+		compact: commander.compact,
+		url: function (relativePath, type) {
+			return Q.resolve(relativePath + "?type=" + encodeURIComponent(type));
+
+			//return Q.delay(relativePath + "?type=" + encodeURIComponent(type), 1000);
+		}
+	}
+);
 
 var server = new capsela.Server(8774)
 	.addStage(
