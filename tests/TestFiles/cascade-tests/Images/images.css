@@ -1,0 +1,25 @@
+﻿img {
+	float: left;
+}
+
+.image-test {
+	color: gray;
+	float: left;
+	text-align: center;
+	font: 10px sans-serif;
+	background-position: center 12px;
+	background-repeat: no-repeat;
+}
+
+	.image-test.down {
+		background: #46483E url(node.png) center 20px no-repeat;
+		width: 245px;
+		height: 78px;
+		padding: 8px;
+	}
+
+	.image-test.up {
+		background-image: url(../womm.png);
+		width: 200px;
+		height: 205px;
+	}
