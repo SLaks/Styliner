@@ -110,9 +110,6 @@ function parseDataUri(uri) {
 
 function appendStyleSource(doc, styleSource, options) {
 	/// <summary>Appends an array of non-static CSS elements (strings and rules) to a document.</summary>
-	var head = doc('head');
-	if (!head)
-		head = doc.root().append('<head />');
 
 	styleSource = styleSource.map(function (o) { return o.toString(options.compact); })
 							 .join("");
@@ -121,7 +118,16 @@ function appendStyleSource(doc, styleSource, options) {
 	else
 		styleSource = "<style>\n" + styleSource + "\n</style>";
 
-	head.append(styleSource);
+	var head = doc('head');
+	if (head.length)
+		head.append(styleSource);
+	else {
+		var body = doc('body');
+		if (body.length)
+			body.before(styleSource);
+		else
+			doc.root().prepend(styleSource);
+	}
 }
 function applyElements(doc, rules, options) {
 	/// <summary>Applies a collection of parsed CSS rules and sources to an HTML document.</summary>
@@ -135,7 +141,7 @@ function applyElements(doc, rules, options) {
 	//TODO: Populate from strings & non-static rules
 	//TODO: Add newlines after rules if !options.compact
 	styleSource = rules;
-
+	console.log(styleSource);
 	appendStyleSource(doc, styleSource, options);
 }
 
