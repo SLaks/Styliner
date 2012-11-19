@@ -7,7 +7,7 @@
     "html",
     "css"
   ],
-  "main": "Styliner.js",
+  "main": "lib/Styliner.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Unroll-Me/Website.git"
