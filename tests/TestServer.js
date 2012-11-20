@@ -60,22 +60,6 @@ var server = new capsela.Server(8774)
 				);
 			});
 		})
-	.addStage(
-		function (request) {
-			var path = request.url.replace(/^\//, '');
-			var filePath = qfs.join(styliner.baseDir, path);
-
-			var self = this;
-			if (/\/$/.test(path))
-				return self.pass(request);
-
-			return qfs.isDirectory(filePath).then(function (isDir) {
-				if (isDir)
-					return new capsela.Redirect(request.getBaseUrl() + "/" + path + "/");
-				else
-					return self.pass(request);
-			});
-		})
 	.addStage(function (request) {
 		var contentTypeOverride = {
 			"acid3/empty.css": 'text/html',
