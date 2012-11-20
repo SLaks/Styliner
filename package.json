@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "commander": "~1.0.5",
-    "capsela": "git://github.com/Unroll-Me/capsela.git"
+    "capsela": "git://github.com/Unroll-Me/capsela.git",
+    "vash": "~0.5.7-1547"
   }
 }

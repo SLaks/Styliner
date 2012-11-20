@@ -7,6 +7,8 @@ var capsela = require('capsela');
 var Styliner = require('..');
 require('../Styliner-less');
 
+var vash = require('vash');
+
 var commander = require('commander');
 commander.option('-c, --compact', "Minify generated HTML.");
 commander.parse(process.argv);
@@ -23,6 +25,15 @@ var styliner = new Styliner(
 		}
 	}
 );
+
+var VashViewEngine = capsela.View.extend({}, {
+	init: function (template) {
+		this._super(template);
+		this.render = vash.compile(template);
+	},
+	isComplete: function () { return true; }
+});
+
 
 var StylinerResponse = capsela.Response.extend({
 	create: function (filePath) {
@@ -45,21 +56,32 @@ var StylinerResponse = capsela.Response.extend({
 	}
 });
 
-var server = new capsela.Server(8774)
-	.addStage(
-		function (request) {
-			return this.pass(request).then(null, function (err) {
-				if (err instanceof capsela.Response)
-					return err;
 
-				return new capsela.Response(
-					500,
-					{},
-					err.stack || err.message,
-					"text/plain"
-				);
-			});
-		})
+
+var server = new capsela.Server(8774)
+	.addStage(function (request) {
+		return this.pass(request).then(null, function (err) {
+			if (err instanceof capsela.Response)
+				return err;
+
+			return new capsela.Response(
+				500,
+				{},
+				err.stack || err.message,
+				"text/plain"
+			);
+		});
+	})
+	.addStage(new capsela.stages.ViewRenderer(qfs.join(__dirname, 'Views/'), VashViewEngine))
+	.addStage(function (request) {
+		if (request.path !== '/')
+			return this.pass(request);
+
+		return qfs.list(styliner.baseDir)
+				.then(function (names) {
+					return new capsela.ViewResponse("List", names);
+				});
+	})
 	.addStage(function (request) {
 		var contentTypeOverride = {
 			"acid3/empty.css": 'text/html',
