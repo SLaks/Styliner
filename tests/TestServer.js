@@ -56,9 +56,8 @@ var StylinerResponse = capsela.Response.extend({
 	}
 });
 
-
-
 var server = new capsela.Server(8774)
+	// Include stack traces in error pages.
 	.addStage(function (request) {
 		return this.pass(request).then(null, function (err) {
 			if (err instanceof capsela.Response)
@@ -72,7 +71,10 @@ var server = new capsela.Server(8774)
 			);
 		});
 	})
+
+	// Render ViewResponses from all subsequent stages
 	.addStage(new capsela.stages.ViewRenderer(qfs.join(__dirname, 'Views/'), VashViewEngine))
+	// Show a list of pages at /
 	.addStage(function (request) {
 		if (request.path !== '/')
 			return this.pass(request);
@@ -82,6 +84,7 @@ var server = new capsela.Server(8774)
 					return new capsela.ViewResponse("List", names);
 				});
 	})
+	// Override the Content-Type header for some files from the Acid3 test
 	.addStage(function (request) {
 		var contentTypeOverride = {
 			"acid3/empty.css": 'text/html',
@@ -102,14 +105,16 @@ var server = new capsela.Server(8774)
 			return response;
 		});
 	})
+	// Run all text/html files from subsequent stages through Styliner
 	.addStage(function (request) {
 		return this.pass(request).then(function (response) {
-			if (response && response.getContentType() === "text/html")
+			if (response instanceof capsela.FileResponse && response.getContentType() === "text/html")
 				return StylinerResponse.create(response);
 			else
 				return response;
 		});
 	})
+	// Serve all files in the TestFiles folder
 	.addStage(new capsela.stages.FileServer("/", styliner.baseDir, "index.html"));
 
 
