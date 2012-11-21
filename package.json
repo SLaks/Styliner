@@ -29,7 +29,8 @@
     "cheerio": "~0.10.1",
     "fs-boot": "git://github.com/Unroll-Me/fs-boot.git",
     "winston": "~0.6.2",
-    "lodash": "~0.10.0"
+    "lodash": "~0.10.0",
+    "CSSselect": "~0.3.0"
   },
   "devDependencies": {
     "commander": "~1.0.5",
