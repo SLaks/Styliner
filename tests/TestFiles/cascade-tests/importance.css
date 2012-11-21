@@ -28,3 +28,16 @@
 .ImportantSequence {
 	color: pink;
 }
+
+
+.ImportantInlined {
+	color: green !important;
+}
+
+	.ImportantInlined i {
+		color: red;
+	}
+
+	.ImportantInlined b {
+		color: red !important;
+	}
