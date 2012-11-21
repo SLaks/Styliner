@@ -21,7 +21,7 @@ var styliner = new Styliner(
 		url: function (relativePath, type) {
 			return Q.resolve(relativePath + "?type=" + encodeURIComponent(type));
 
-			//return Q.delay(relativePath + "?type=" + encodeURIComponent(type), 1000);
+			//return Q.delay(relativePath + "?type=" + encodeURIComponent(type), 2000);
 		}
 	}
 );
