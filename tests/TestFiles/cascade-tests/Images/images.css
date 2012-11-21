@@ -19,9 +19,15 @@
 	}
 
 	.image-test.up {
-		background-image: url(../WOMM.png);
+		background-image: url("../WOMM.png");
 		width: 200px;
 		height: 205px;
+	}
+
+	.image-test.funny {
+		background-image: url("Funny URL.jpg");
+		width: 360px;
+		height: 360px;
 	}
 
 p {
