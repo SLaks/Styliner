@@ -11,6 +11,7 @@ var vash = require('vash');
 
 var commander = require('commander');
 commander.option('-c, --compact', "Minify generated HTML.");
+commander.option('-k, --keep-rules', "Don't inline static CSS rules.");
 commander.parse(process.argv);
 
 
@@ -18,6 +19,7 @@ var styliner = new Styliner(
 	qfs.join(__dirname, 'TestFiles/'),
 	{
 		compact: commander.compact,
+		keepRules: commander.keepRules,
 		url: function (relativePath, type) {
 			return Q.resolve(relativePath + "?type=" + encodeURIComponent(type));
 
