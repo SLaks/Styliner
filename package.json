@@ -28,12 +28,12 @@
     "winston": "~0.6.2",
     "lodash": "~0.10.0",
     "CSSselect": "~0.3.0",
-    "q-io": "git://github.com/Unroll-Me/q-io.git",
+    "q-io": ">=1.1.0",
     "parserlib": ">0.2.0"
   },
   "devDependencies": {
     "commander": "~1.0.5",
-    "capsela": "git://github.com/Unroll-Me/capsela.git",
+    "capsela": ">=0.6.3",
     "vash": "~0.5.7-1547"
   }
 }
