@@ -28,7 +28,7 @@
     "winston": "~0.6.2",
     "lodash": "~0.10.0",
     "CSSselect": "~0.3.0",
-    "q-io": "~1.0.0",
+    "q-io": "git://github.com/Unroll-Me/q-io.git",
     "parserlib": ">0.2.0"
   },
   "devDependencies": {
