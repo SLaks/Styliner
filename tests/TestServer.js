@@ -2,7 +2,7 @@
 "use strict";
 var Q = require('q');
 var path = require('path');
-var qfs = require('q-fs');
+var qfs = require('q-io/fs');
 var capsela = require('capsela');
 var Styliner = require('..');
 require('../Styliner-less');
