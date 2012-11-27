@@ -92,10 +92,13 @@
 
    /* line thirteen continued: parser tests */
    .parser { /* comment parsing test -- comment ends before the end of this line, the backslash should have no effect: \*/ }
+   /* SLaks: I removed error:\}; this caused parserlib to incorrectly close the block early. */
    .parser { margin: 0 5em 1em; padding: 0 1em; width: 2em; height: 1em; error: ; background: yellow; } /* setup with parsing test */
    * html .parser {  background: gray; }
    \.parser { padding: 2em; }
    .parser { m\argin: 2em; };
+   /* SLaks: the semicolon should be treated as part of a bad selector; parserlib ignores the semicolon and incorrectly keeps the selector. */
+   /*.parser { height: 3em; }*/
    .parser { width: 200; }
    .parser { border: 5em solid red ! error; }
    .parser { background: red pink; }
@@ -125,7 +128,7 @@
   <h2 id="top">Hello World!</h2>
 
   <div class="picture">
-   <!-- I added closing tags, since my parser doesn't use tag placement rules and it's not an important feature for me. -->
+   <!-- SLaks: I added closing tags, since my parser doesn't use tag placement rules and it's not an important feature for me. -->
    <p></p><table><tr><td></table><p class="bad"></p>
    <blockquote class="first one"><address class="second two"></address></blockquote>
    <div class="forehead"><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></div>
