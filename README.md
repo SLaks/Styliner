@@ -48,7 +48,9 @@ You can pass an options hash as the second parameter to the `Styliner` construct
   ###CSSselect issues
   The Acid2 and Acid3 tests do not work when run through Styliner because the [CSSselect](https://github.com/fb55/CSSselect) parser (which I use to find elements to apply styles to) cannot handle exotic selectors.
 
+  Acid3 doesn't work because most of its rules need to be applied dynamically (for elements created in Javascript).  I can fix this by adding `.js` to those rules.
+
   Specifically, the following selectors don't work:
-   - `[class~="one"][class~="first"] [class="second two"][class="second two"]` (Acid2) doesn't match correctly
-   - `* html .parser` incorrectly matches `.parser`; this may be my fault
-   - `#\ ` (an escaped ID selector matching `id=" "`) crashes the CSSselect parser for Acid3 (https://github.com/fb55/CSSwhat/issues/2)
+   - `* html .parser` (Acid2) incorrectly matches `.parser` (https://github.com/fb55/CSSselect/issues/8#issuecomment-10772825)
+   - `#\ ` (an escaped ID selector matching `id=" "`) crashes the CSSselect parser for Acid3 (fixed by https://github.com/fb55/CSSwhat/issues/3)
+   - `[class~="one"][class~="first"] [class="second two"][class="second two"]` (Acid2) doesn't match correctly (also fixed by https://github.com/fb55/CSSwhat/issues/3)
