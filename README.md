@@ -29,6 +29,10 @@ You can pass an options hash as the second parameter to the `Styliner` construct
   - True to keep all rules in `<style>` tags instead of inlining static rules into elements.  This results in smaller files, but will not work with Gmail.
  - `fixYahooMQ: true`
   - True to add an attribute/ID selector to all rules in media queries to fix a bug in Yahoo Mail.  Yahoo Mail drops all media queries, converting their contents to regular rules that will always be applied.  This option adds a workaround for that.
+ - `keepInvalid: true`
+  - Don't skip properties that parserlib reports as invalid. (all invalid properties are always logged as winston errors)
+  - Pass this option if you're using features that parser doesn't recognize, or if you come across a bug in parserlib
+  - This option breaks Acid2, which tests that valid properties from earlier rules replace invalid properties from later rules.  (see also the first known issue)
  - `urlPrefix: "dir/"`
   - The path containing referenced URLs.  All non-absolute URLs in `<a>` tags, `<img>` tags, and stylesheets will have this path prepended.  For greater flexibility, pass a `url()` function instead.
  - `url: function(path, type)`
@@ -40,3 +44,11 @@ You can pass an options hash as the second parameter to the `Styliner` construct
    - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin
  - Except for `margin` and `padding`, shorthand inlined properties that are overridden by non-inlined non-shorthand counterparts will not be overridden correctly.
   - To fix this, add splitter methods in Preprocessor.js to split other shorthand properties.
+
+  ###CSSselect issues
+  The Acid2 and Acid3 tests do not work when run through Styliner because the [CSSselect](https://github.com/fb55/CSSselect) parser (which I use to find elements to apply styles to) cannot handle exotic selectors.
+
+  Specifically, the following selectors don't work:
+   - `[class~="one"][class~="first"] [class="second two"][class="second two"]` (Acid2) doesn't match correctly
+   - `* html .parser` incorrectly matches `.parser`; this may be my fault
+   - `#\ ` (an escaped ID selector matching `id=" "`) crashes the CSSselect parser for Acid3 (https://github.com/fb55/CSSwhat/issues/2)
