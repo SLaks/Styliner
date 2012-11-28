@@ -44,10 +44,14 @@ You can pass an options hash as the second parameter to the `Styliner` construct
    - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin
  - Except for `margin` and `padding`, shorthand inlined properties that are overridden by non-inlined non-shorthand counterparts will not be overridden correctly.
   - To fix this, add splitter methods in Preprocessor.js to split other shorthand properties.
- - If a single element receives a property from a soft-dynamic (pseudo-class) rule and a static rule, and a different element receives a property from a different static rule that overrides that soft-dynamic rule, the soft-dynamic rule will incorrectly override the static rule on the second element.
+ - If one element receives a property from a soft-dynamic (pseudo-class) rule and a static rule, and a different element receives a property from an earlier static rule that overrides that soft-dynamic rule, the soft-dynamic rule will incorrectly override the static rule on the second element.
   - This happens because I need to make the dynamic rule `!important` in order to override the inlined static rule on the first element.
   - I could do another pass to find the and `!important`-ize the inline property in the second element, but that would leave an unfixable problem if there is another dynamic rule that should override that property on the second element.
-
+ - Similarly, if one element receives a property from a soft-dynamic (pseudo-class) rule and a static rule, and a different element receives a property from an _later_ static rule that overrides that soft-dynamic rule, but is in turn overridden by a second soft-dynamic rule, the second soft-dynamic rule will be incorrectly overridden.
+  - This happens because the inlined property from its static rule is made `!important` to override the already-`!important`-ized less-specific soft-dynamic rule.  It is then impossible to make the more-specific soft-dynamic rule override the inlined property.
+  - This is impossible to fix.  This issue could be flipped (to match the previous issue) by only setting `important = true` after the first pass.
+ - These issues could be made fixable by adding additional levels of importance to the CSS spec (`!important1`, `!important2`, etc), and changing Styliner to keep running additional passes and making overridden rules more and more important until it stabilizes.
+  - This would probably [not be a good idea](http://blogs.msdn.com/b/oldnewthing/archive/2011/03/10/10138969.aspx).
   ###CSSselect issues
   The Acid2 and Acid3 tests do not work when run through Styliner because the [CSSselect](https://github.com/fb55/CSSselect) parser (which I use to find elements to apply styles to) cannot handle exotic selectors.
 

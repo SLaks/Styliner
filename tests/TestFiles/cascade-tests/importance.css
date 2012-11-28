@@ -1,4 +1,13 @@
-﻿.InvertedSequence {
+﻿
+#blue {
+	color: blue;
+}
+
+	#blue:hover {
+		color: red;
+	}
+
+.InvertedSequence {
 	color: pink;
 }
 
@@ -40,4 +49,12 @@
 
 	.ImportantInlined b {
 		color: red !important;
+	}
+
+#purple {
+	color: purple;
+}
+
+	#purple:hover {
+		color: red;
 	}
