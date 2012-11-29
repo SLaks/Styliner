@@ -1,4 +1,4 @@
-﻿#Styliner
+#Styliner
 Styliner is a Node.js library that reads CSS rules from external stylesheets and converts them to inline `style=""` attributes in an HTML document.  
 
 Styliner is intended for use with HTML emails.  With it, you can write regular CSS or LESS (with the Styliner-less package) stylesheets, then merge them into your HTML and create emails that work with Gmail (which drops all `<style>` tags).  Unfortunately, though, you'll still need to use `<table>`s to get complex layout.
@@ -21,7 +21,7 @@ The `processHTML` method returns a Q promise of the inlined HTML source.
 
 You can pass an options hash as the second parameter to the `Styliner` constructor with the following options: (all options default to false):
 
- - `compact: true`		
+ - `compact: true`
   - True to minify all output.  This option removes all extraneous whitespace from the generated HTML (including any remaining inline stylesheets)   
  - `noCSS: true`
   - True to not emit `<style>` tags for rules that cannot be inlined.  This option will completely drop any dynamic CSS rules. (such as media queries, pseudo-elements, or `@font-face`s)
@@ -40,8 +40,8 @@ You can pass an options hash as the second parameter to the `Styliner` construct
 
 ##Known Issues
  - Browser property fallbacks don't cascade
-   - If you specify `background: red;` in one rule, and `background: linear-gradient(...)` in a more specific rule, Styliner will replace the property from the first rule with the more specific one.  This means that browsers that don't support `linear-gradient()` won't see any background at all. 
-   - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin
+  - If you specify `background: red;` in one rule, and `background: linear-gradient(...)` in a more specific rule, Styliner will replace the property from the first rule with the more specific one.  This means that browsers that don't support `linear-gradient()` won't see any background at all. 
+  - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin
  - Except for `margin` and `padding`, shorthand inlined properties that are overridden by non-inlined non-shorthand counterparts will not be overridden correctly.
   - To fix this, add splitter methods in Preprocessor.js to split other shorthand properties.
  - If one element receives a property from a soft-dynamic (pseudo-class) rule and a static rule, and a different element receives a property from an earlier static rule that overrides that soft-dynamic rule, the soft-dynamic rule will incorrectly override the static rule on the second element.
@@ -59,6 +59,7 @@ The Acid2 and Acid3 tests do not work when run through Styliner because the [CSS
 Acid3 doesn't work because most of its rules need to be applied dynamically (for elements created in Javascript).  I can fix this by adding `.js` to those rules.
 
 Specifically, the following selectors don't work:
+
  - `* html .parser` (Acid2) incorrectly matches `.parser` (https://github.com/fb55/CSSselect/issues/8#issuecomment-10772825)
  - `#\ ` (an escaped ID selector matching `id=" "`) crashes the CSSselect parser for Acid3 (fixed by https://github.com/fb55/CSSwhat/issues/3)
  - `[class~="one"][class~="first"] [class="second two"][class="second two"]` (Acid2) doesn't match correctly (also fixed by https://github.com/fb55/CSSwhat/issues/3)
