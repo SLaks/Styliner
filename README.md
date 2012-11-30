@@ -39,6 +39,9 @@ You can pass an options hash as the second parameter to the `Styliner` construct
   - A function called to resolve URLs.  All non-absolute URLs in HTML or CSS will be replaced by the return value of this function. The function is passed the relative path to the file and the source of the URL ("img" or "a" or other HTML tags; URLs from CSS pass "img"). It can return a promise or a string
 
 ##Known Issues
+ - Media queries don't work
+  - This is caused by a [bug](https://github.com/nzakas/parser-lib/pull/30) in parserlib.  The bug has been fixed, but the fix has not been released.
+  - Once parserlib releases `>0.2.0`, this bug will vanish.  In the meantime, you can clone [parserlib](https://github.com/nzakas/parser-lib), run `ant release`, and install the package from `release/npm`.
  - Browser property fallbacks don't cascade
   - If you specify `background: red;` in one rule, and `background: linear-gradient(...)` in a more specific rule, Styliner will replace the property from the first rule with the more specific one.  This means that browsers that don't support `linear-gradient()` won't see any background at all. 
   - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin
