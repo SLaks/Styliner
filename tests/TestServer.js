@@ -5,7 +5,7 @@ var path = require('path');
 var qfs = require('q-io/fs');
 var capsela = require('capsela');
 var Styliner = require('..');
-require('../Styliner-less');
+require('styliner-less')(Styliner);
 
 var vash = require('vash');
 
@@ -21,7 +21,7 @@ var styliner = new Styliner(
 		compact: commander.compact,
 		keepRules: commander.keepRules,
 		url: function (relativePath, type) {
-			return Q.resolve(relativePath + "?type=" + encodeURIComponent(type));
+			return relativePath + "?type=" + encodeURIComponent(type);
 
 			//return Q.delay(relativePath + "?type=" + encodeURIComponent(type), 2000);
 		}
