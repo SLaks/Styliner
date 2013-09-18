@@ -39,9 +39,6 @@ You can pass an options hash as the second parameter to the `Styliner` construct
   - A function called to resolve URLs.  All non-absolute URLs in HTML or CSS will be replaced by the return value of this function. The function is passed the relative path to the file and the source of the URL ("img" or "a" or other HTML tags; URLs from CSS pass "img"). It can return a promise or a string
 
 ##Known Issues
- - Media queries don't work
-  - This is caused by a [bug](https://github.com/nzakas/parser-lib/pull/30) in parserlib.  The bug has been fixed, but the fix has not been released.
-  - Once parserlib releases `>0.2.0`, this bug will vanish.  In the meantime, you can clone [parserlib](https://github.com/nzakas/parser-lib), run `ant release`, and install the package from `release/npm`.
  - Browser property fallbacks don't cascade
   - If you specify `background: red;` in one rule, and `background: linear-gradient(...)` in a more specific rule, Styliner will replace the property from the first rule with the more specific one.  This means that browsers that don't support `linear-gradient()` won't see any background at all. 
   - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin
@@ -56,13 +53,13 @@ You can pass an options hash as the second parameter to the `Styliner` construct
  - These issues could be made fixable by adding additional levels of importance to the CSS spec (`!important1`, `!important2`, etc), and changing Styliner to keep running additional passes and making overridden rules more and more important until it stabilizes.
   - This would probably [not be a good idea](http://blogs.msdn.com/b/oldnewthing/archive/2011/03/10/10138969.aspx).
 
-###CSSselect issues
-The Acid2 and Acid3 tests do not work when run through Styliner because the [CSSselect](https://github.com/fb55/CSSselect) parser (which I use to find elements to apply styles to) cannot handle exotic selectors.
-
+###Acid Test Issues
 Acid3 doesn't work because most of its rules need to be applied dynamically (for elements created in Javascript).  I can fix this by adding `.js` to those rules.
 
-Specifically, the following selectors don't work:
+Acid2 has the following issues:
 
- - `* html .parser` (Acid2) incorrectly matches `.parser` (https://github.com/fb55/CSSselect/issues/8#issuecomment-10772825)
- - `#\ ` (an escaped ID selector matching `id=" "`) crashes the CSSselect parser for Acid3 (fixed by https://github.com/fb55/CSSwhat/issues/3)
- - `[class~="one"][class~="first"] [class="second two"][class="second two"]` (Acid2) doesn't match correctly (also fixed by https://github.com/fb55/CSSwhat/issues/3)
+ - `background: red pink` (which is an invalid value) incorrectly overrides the valid `background: yellow` for `.parser`, resulting in a white background.
+  - I could fix this by relying on parserlib to validate CSS rules and skip all invalid rules.  However, this would make Styliner reject all new CSS features until parserlib is updated to support them; I think that's not worth doing.
+
+ - `* html .parser` incorrectly matches `.parser`, resulting in a gray background.
+  - This is caused by [CSSselect#8](https://github.com/fb55/CSSselect/issues/8) and [cheerio#162](https://github.com/MatthewMueller/cheerio/issues/162).
