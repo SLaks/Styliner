@@ -1,6 +1,5 @@
-﻿/*jshint node: true, camelcase: true, eqeqeq: true, forin: true, immed: true, latedef: true, newcap: true, noarg: true, undef: true, globalstrict: true*/
-"use strict";
-var Q = require('q');
+﻿"use strict";
+
 var path = require('path');
 var qfs = require('q-io/fs');
 var capsela = require('capsela');
