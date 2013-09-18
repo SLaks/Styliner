@@ -59,7 +59,10 @@ Acid3 doesn't work because most of its rules need to be applied dynamically (for
 Acid2 has the following issues:
 
  - `background: red pink` (which is an invalid value) incorrectly overrides the valid `background: yellow` for `.parser`, resulting in a white background.
-  - I could fix this by relying on parserlib to validate CSS rules and skip all invalid rules.  However, this would make Styliner reject all new CSS features until parserlib is updated to support them; I think that's not worth doing.
+  - This happens because parserlib does not validate the `background` property at all.  (this would be a complex validation rule to add)
+
+ - `width: 200` (which is an invalid value) incorrectly overrides the valid `width: 2em` for `.parser`, resulting in the element stretching to fit the browser.
+  - This is fixed by [parserlib#48](https://github.com/nzakas/parser-lib/pull/48), which has not been merged.
 
  - `* html .parser` incorrectly matches `.parser`, resulting in a gray background.
   - This is caused by [CSSselect#8](https://github.com/fb55/CSSselect/issues/8) and [cheerio#162](https://github.com/MatthewMueller/cheerio/issues/162).
