@@ -1,5 +1,5 @@
 pygments:     true
-exclude:      ["WE-settings.xml", "CNAME", "*.less", "*.cmd"]
+exclude:      ["WE2013-settings.xml", "CNAME", "*.less", "*.cmd", "*.sln", "*.suo"]
 
 port:        8778
 

@@ -6,18 +6,19 @@
     <CoffeeScriptShowPreviewWindow>True</CoffeeScriptShowPreviewWindow>
     <CoffeeScriptWrapClosure>True</CoffeeScriptWrapClosure>
     <CssAutoCloseCurlyBraces>True</CssAutoCloseCurlyBraces>
-    <CssEnableMinification>True</CssEnableMinification>
+    <CssEnableGzipping>false</CssEnableGzipping>
+    <CssEnableMinification>true</CssEnableMinification>
     <CssEnableSelectorHighligting>True</CssEnableSelectorHighligting>
     <CssErrorLocation>1</CssErrorLocation>
     <CssOnlyW3cAllowed>False</CssOnlyW3cAllowed>
-    <CssShowBrowserTooltip>True</CssShowBrowserTooltip>
-    <CssShowInitialInherit>False</CssShowInitialInherit>
-    <CssShowUnsupported>True</CssShowUnsupported>
-    <CssSyncVendorValues>True</CssSyncVendorValues>
-    <CSSValidateOverQualifiedSelector>False</CSSValidateOverQualifiedSelector>
-    <CssValidateStarSelector>False</CssValidateStarSelector>
-    <CssValidateZeroUnit>True</CssValidateZeroUnit>
-    <EnableSpeedTyping>True</EnableSpeedTyping>
+    <CssShowBrowserTooltip>true</CssShowBrowserTooltip>
+    <CssShowInitialInherit>false</CssShowInitialInherit>
+    <CssShowUnsupported>true</CssShowUnsupported>
+    <CssSyncVendorValues>true</CssSyncVendorValues>
+    <CSSValidateOverQualifiedSelector>false</CSSValidateOverQualifiedSelector>
+    <CssValidateStarSelector>false</CssValidateStarSelector>
+    <CssValidateZeroUnit>true</CssValidateZeroUnit>
+    <EnableSpeedTyping>true</EnableSpeedTyping>
     <HtmlEnableMustache>True</HtmlEnableMustache>
     <HtmlEnableZenCoding>True</HtmlEnableZenCoding>
     <JavaScriptAutoCloseBraces>True</JavaScriptAutoCloseBraces>
@@ -40,12 +41,12 @@
     <JsHint_smarttabs>True</JsHint_smarttabs>
     <JsHintEnable>True</JsHintEnable>
     <JsHintErrorLocation>2</JsHintErrorLocation>
-    <KeepImportantComments>False</KeepImportantComments>
-    <LessCompileOnBuild>False</LessCompileOnBuild>
-    <LessCompileToFolder>False</LessCompileToFolder>
-    <LessGenerateCssFile>True</LessGenerateCssFile>
-    <LessMinify>True</LessMinify>
-    <LessShowPreviewWindow>True</LessShowPreviewWindow>
+    <KeepImportantComments>false</KeepImportantComments>
+    <LessCompileOnBuild>false</LessCompileOnBuild>
+    <LessCompileToFolder>false</LessCompileToFolder>
+    <LessGenerateCssFile>true</LessGenerateCssFile>
+    <LessMinify>true</LessMinify>
+    <LessShowPreviewWindow>true</LessShowPreviewWindow>
     <ScssGenerateCssFile>True</ScssGenerateCssFile>
     <ScssMinify>True</ScssMinify>
     <ScssShowPreviewWindow>True</ScssShowPreviewWindow>
@@ -53,6 +54,6 @@
     <TypeScriptGenerateJsFile>True</TypeScriptGenerateJsFile>
     <TypeScriptMinify>True</TypeScriptMinify>
     <TypeScriptShowPreviewWindow>True</TypeScriptShowPreviewWindow>
-    <ValidateVendorSpecifics>True</ValidateVendorSpecifics>
+    <ValidateVendorSpecifics>true</ValidateVendorSpecifics>
   </settings>
 </webessentials>
