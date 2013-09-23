@@ -12,7 +12,6 @@ stylesheets: ["syntax-highlighting", "content"]
 		<nav>
 			<ul>
 				<li><a href="#about">About</a></li>
-				<li><a href="#features">Features</a></li>
 				<li><a href="#usage">Usage</a></li>
 				<li><a href="#options">Options</a></li>
 				<li><a href="#faq">FAQ</a></li>
@@ -28,12 +27,6 @@ stylesheets: ["syntax-highlighting", "content"]
 Styliner is a Node.js library that takes HTML documents with regular CSS stylesheets, and moves all of the CSS properties into inline styles.
 
 This lets you write your emails using regular CSS stylesheets and selectors, and have it generate the ugly inline `style=""` for Gmail automatically.
-
-<h1 id="features">Features</h1>
-Styliner uses [CSSselect](https://github.com/fb55/CSSselect) to match CSS selectors; this should support all CSS2 selectors and most CSS3 selectors.
-
-Styliner fully passes Acid1, and passes almost all of Acid2 (except for a few places where my [CSS parser](https://github.com/nzakas/parser-lib) doesn't handle invalid syntax according to spec.  
-Acid3 is primarily driven by Javascript, so it isn't applicable to Styliner.
 
 <h1 id="usage">Usage</h1>
 First, grab Styliner from npm:
@@ -104,6 +97,12 @@ You can create responsive emails the same way you would create responsive websit
 Styliner will automatically add `!important` to media queries that should override rules that were inlined.  
 
 This has some limitations; see [below](#limitations).
+
+##What selectors are supported?
+Styliner uses [CSSselect](https://github.com/fb55/CSSselect) to match CSS selectors; this should support all CSS2 selectors and most CSS3 selectors.
+
+Styliner fully passes Acid1, and passes almost all of Acid2 (except for a few places where my [CSS parser](https://github.com/nzakas/parser-lib) doesn't handle invalid syntax according to spec.  
+Acid3 is primarily driven by Javascript, so it isn't applicable to Styliner.
 
 ##Can I use [LESS](http://lesscss.org)?
 [Yup](https://github.com/SLaks/Styliner-less).
