@@ -4,22 +4,25 @@ title: Styliner – Making HTML emails sane again
 stylesheets: ["syntax-highlighting", "content"]
 ---
 <header>
-	<div>
-		<h1>Styliner</h1>
-		<h2>Making HTML emails sane again</h2>
+	<div class="container">
+		<div class="title">
+			<h1>Styliner</h1>
+			<h2>Making HTML emails sane again</h2>
+		</div>
+		<nav>
+			<ul>
+				<li><a href="#about">About</a></li>
+				<li><a href="#features">Features</a></li>
+				<li><a href="#usage">Usage</a></li>
+				<li><a href="#options">Options</a></li>
+				<li><a href="#faq">FAQ</a></li>
+				<li><a href="#limitations">Limitations</a></li>
+				<li><a href="https://github.com/SLaks/Styliner"><strong>GitHub</strong></a></li>
+			</ul>
+		</nav>
 	</div>
-	<nav>
-		<ul>
-			<li><a href="#about">About</a></li>
-			<li><a href="#features">Features</a></li>
-			<li><a href="#usage">Usage</a></li>
-			<li><a href="#options">Options</a></li>
-			<li><a href="#faq">FAQ</a></li>
-			<li><a href="#limitations">Limitations</a></li>
-			<li><a href="https://github.com/SLaks/Styliner"><strong>GitHub</strong></a></li>
-		</ul>
-	</nav>
 </header>
+<div class="container">
 <article>
 <h1 id="about">About</h1>
 Styliner is a Node.js library that takes HTML documents with regular CSS stylesheets, and moves all of the CSS properties into inline styles.
@@ -128,3 +131,4 @@ Styliner will also not inline any selectors that contain `.js`, under the assump
  - Similarly, if one element receives a property from a soft-dynamic (pseudo-class) rule and a static rule, and a different element receives a property from an _later_ static rule that overrides that soft-dynamic rule, but is in turn overridden by a second soft-dynamic rule, the second soft-dynamic rule will be incorrectly overridden.
   - This happens because the inlined property from its static rule is made `!important` to override the already-`!important`-ized less-specific soft-dynamic rule.  It is then impossible to make the more-specific soft-dynamic rule override the inlined property.
 </article>
+</div>

@@ -4,9 +4,13 @@
 html {
   position: relative;
   min-height: 100%;
+  margin: 0;
 }
 body {
   font-family: 'Source Sans Pro', sans-serif;
+}
+body p:first-child:empty {
+  display: none;
 }
 code,
 kbd,
@@ -40,15 +44,17 @@ hr {
 }
 header {
   line-height: 1;
+  background-color: #fcf7cf;
   text-align: left;
+  padding-bottom: 10px;
 }
-header div h1 {
+header .title h1 {
   margin: 0;
   font-weight: 100;
   font-size: 120px;
   margin-bottom: .1em;
 }
-header div h2 {
+header .title h2 {
   margin: 0;
   font-weight: 400;
   font-size: 16px;
@@ -68,8 +74,16 @@ header nav ul li {
 header nav ul li a {
   display: block;
   padding: 10px;
+  text-align: center;
+  width: 5em;
+  background: #f7ea87;
+  color: #0088cc !important;
+  text-decoration: none;
 }
-header div {
+header nav ul li a:hover {
+  background: #d7cb75;
+}
+header .title {
   width: 380px;
 }
 header nav {
@@ -80,10 +94,10 @@ header nav {
     width: auto;
     margin: 0 10px;
   }
-  header div h1 {
+  header .title h1 {
     font-size: 70px;
   }
-  header div {
+  header .title {
     width: 200px;
   }
   header nav {
@@ -91,10 +105,10 @@ header nav {
   }
 }
 @media only screen and (max-width: 479px) {
-  header div h1 {
+  header .title h1 {
     font-size: 44px;
   }
-  header div {
+  header .title {
     width: 100px;
   }
   header nav {

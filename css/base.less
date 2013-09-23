@@ -6,11 +6,16 @@
 html {
 	position: relative; // Force min-height to stretch past scrollbar for side post list.
 	min-height: 100%;
+	margin: 0;
 }
 
 body {
 	font-family: 'Source Sans Pro', sans-serif;
 }
+
+	body p:first-child:empty {
+		display: none; // Workaround for Markdown bug
+	}
 
 code, kbd, pre, samp {
 	font-family: 'Source Code Pro', monospace;
@@ -46,9 +51,11 @@ hr {
 
 header {
 	line-height: 1;
+	background-color: #fcf7cf;
 	text-align: left;
+	padding-bottom: 10px;
 
-	div {
+	.title {
 		h1 {
 			margin: 0;
 			font-weight: 100;
@@ -78,6 +85,15 @@ header {
 				a {
 					display: block;
 					padding: 10px;
+					text-align: center;
+					width: 5em;
+					background: #f7ea87;
+					color: @linkColor !important;
+					text-decoration: none;
+
+					&:hover {
+						background: #d7cb75;
+					}
 				}
 			}
 		}
@@ -86,7 +102,7 @@ header {
 
 .HeaderLayout(@titleWidth) {
 	header {
-		div {
+		.title {
 			width: @titleWidth;
 		}
 
@@ -104,7 +120,7 @@ header {
 		margin: 0 10px;
 	}
 
-	header div h1 {
+	header .title h1 {
 		font-size: 70px;
 	}
 
@@ -112,7 +128,7 @@ header {
 }
 
 @media only screen and (max-width: 479px) {
-	header div h1 {
+	header .title h1 {
 		font-size: 44px;
 	}
 
