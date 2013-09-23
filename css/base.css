@@ -42,19 +42,21 @@ header {
   line-height: 1;
   text-align: left;
 }
-header h1 {
+header div h1 {
   margin: 0;
   font-weight: 100;
   font-size: 120px;
+  margin-bottom: .1em;
 }
-header h2 {
+header div h2 {
   margin: 0;
   font-weight: 400;
   font-size: 16px;
   font-style: italic;
 }
 header nav {
-  float: right;
+  position: absolute;
+  top: 0;
 }
 header nav ul {
   list-style: none;
@@ -67,21 +69,35 @@ header nav ul li a {
   display: block;
   padding: 10px;
 }
-@media only screen and (max-width: 599px) {
+header div {
+  width: 380px;
+}
+header nav {
+  margin-left: 380px;
+}
+@media only screen and (max-width: 767px) {
   .container {
     width: auto;
     margin: 0 10px;
   }
-  header h1 {
-    font-size: 96px;
-    margin-bottom: 10px;
+  header div h1 {
+    font-size: 70px;
+  }
+  header div {
+    width: 200px;
+  }
+  header nav {
+    margin-left: 200px;
   }
 }
 @media only screen and (max-width: 479px) {
-  header h1 {
-    font-size: 70px;
+  header div h1 {
+    font-size: 44px;
   }
-  header h2 {
-    margin: 0 30px;
+  header div {
+    width: 100px;
+  }
+  header nav {
+    margin-left: 100px;
   }
 }

@@ -48,21 +48,25 @@ header {
 	line-height: 1;
 	text-align: left;
 
-	h1 {
-		margin: 0;
-		font-weight: 100;
-		font-size: 120px;
-	}
+	div {
+		h1 {
+			margin: 0;
+			font-weight: 100;
+			font-size: 120px;
+			margin-bottom: .1em;
+		}
 
-	h2 {
-		margin: 0;
-		font-weight: 400;
-		font-size: 16px;
-		font-style: italic;
+		h2 {
+			margin: 0;
+			font-weight: 400;
+			font-size: 16px;
+			font-style: italic;
+		}
 	}
 
 	nav {
-		float: right;
+		position: absolute;
+		top: 0;
 
 		ul {
 			list-style: none;
@@ -80,24 +84,37 @@ header {
 	}
 }
 
-@media only screen and (max-width: 599px) {
+.HeaderLayout(@titleWidth) {
+	header {
+		div {
+			width: @titleWidth;
+		}
+
+		nav {
+			margin-left: @titleWidth;
+		}
+	}
+}
+
+.HeaderLayout(380px);
+
+@media only screen and (max-width: 767px) {
 	.container {
 		width: auto;
 		margin: 0 10px;
 	}
 
-	header h1 {
-		font-size: 96px;
-		margin-bottom: 10px;
-	}
-}
-
-@media only screen and (max-width: 479px) {
-	header h1 {
+	header div h1 {
 		font-size: 70px;
 	}
 
-	header h2 {
-		margin: 0 30px;
+	.HeaderLayout(200px);
+}
+
+@media only screen and (max-width: 479px) {
+	header div h1 {
+		font-size: 44px;
 	}
+
+	.HeaderLayout(100px);
 }

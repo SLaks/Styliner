@@ -4,6 +4,10 @@ title: Styliner – Making HTML emails sane again
 stylesheets: ["syntax-highlighting", "content"]
 ---
 <header>
+	<div>
+		<h1>Styliner</h1>
+		<h2>Making HTML emails sane again</h2>
+	</div>
 	<nav>
 		<ul>
 			<li><a href="#about">About</a></li>
@@ -15,8 +19,6 @@ stylesheets: ["syntax-highlighting", "content"]
 			<li><a href="https://github.com/SLaks/Styliner"><strong>GitHub</strong></a></li>
 		</ul>
 	</nav>
-	<h1>Styliner</h1>
-	<h2>Making HTML emails sane again</h2>
 </header>
 <article>
 <h1 id="about">About</h1>
