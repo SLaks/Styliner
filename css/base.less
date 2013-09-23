@@ -1,3 +1,4 @@
+@import url('./_mixins.less');
 @import url('./_variables.less');
 
 @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro);
@@ -54,13 +55,17 @@ header {
 	background-color: #fcf7cf;
 	text-align: left;
 	padding-bottom: 10px;
+	.clearfix();
 
 	.title {
+		float: left;
+
 		h1 {
 			margin: 0;
 			font-weight: 100;
 			font-size: 120px;
 			margin-bottom: .1em;
+			padding-right: .2em;
 		}
 
 		h2 {
@@ -71,48 +76,29 @@ header {
 		}
 	}
 
-	nav {
-		position: absolute;
-		top: 0;
+	ul {
+		list-style: none;
+		margin: 0;
 
-		ul {
-			list-style: none;
-			margin: 0;
+		li {
+			float: left;
 
-			li {
-				float: left;
+			a {
+				display: block;
+				padding: 10px;
+				text-align: center;
+				width: 5em;
+				background: #f7ea87;
+				color: @linkColor !important;
+				text-decoration: none;
 
-				a {
-					display: block;
-					padding: 10px;
-					text-align: center;
-					width: 5em;
-					background: #f7ea87;
-					color: @linkColor !important;
-					text-decoration: none;
-
-					&:hover {
-						background: #d7cb75;
-					}
+				&:hover {
+					background: #d7cb75;
 				}
 			}
 		}
 	}
 }
-
-.HeaderLayout(@titleWidth) {
-	header {
-		.title {
-			width: @titleWidth;
-		}
-
-		nav {
-			margin-left: @titleWidth;
-		}
-	}
-}
-
-.HeaderLayout(380px);
 
 @media only screen and (max-width: 767px) {
 	.container {
@@ -123,8 +109,6 @@ header {
 	header .title h1 {
 		font-size: 70px;
 	}
-
-	.HeaderLayout(200px);
 }
 
 @media only screen and (max-width: 479px) {
@@ -132,5 +116,8 @@ header {
 		font-size: 44px;
 	}
 
-	.HeaderLayout(100px);
+	header .title h2 {
+		max-width: 150px;
+		line-height: 1.4;
+	}
 }
