@@ -1,5 +1,9 @@
+# Ignore generated Jekyll files from gh-pages branch
+_site/
+
 # Tells WebMatrix that this uses Node.js.
 Web.config
+*.suo
 
 lib-cov
 *.seed
