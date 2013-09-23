@@ -1,0 +1,9 @@
+.gradient(...) {
+	@props: ~`"@{arguments}".replace(/[\[\]]/g, '')`;
+
+	background: -webkit-linear-gradient(@props);
+	background: -ms-linear-gradient(@props);
+	background: -moz-linear-gradient(@props);
+	background: -o-linear-gradient(@props);
+	background: linear-gradient(@props);
+}

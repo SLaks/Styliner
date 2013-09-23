@@ -1,11 +1,9 @@
 ---
 layout: default
 title: Styliner – Making HTML emails sane again
-stylesheets: ["home"]
+stylesheets: ["syntax-highlighting", "content"]
 ---
 <header>
-	<h1>Styliner</h1>
-	<h2>Making HTML emails sane again</h2>
 	<nav>
 		<ul>
 			<li><a href="#about">About</a></li>
@@ -14,10 +12,13 @@ stylesheets: ["home"]
 			<li><a href="#options">Options</a></li>
 			<li><a href="#faq">FAQ</a></li>
 			<li><a href="#limitations">Limitations</a></li>
+			<li><a href="https://github.com/SLaks/Styliner"><strong>GitHub</strong></a></li>
 		</ul>
 	</nav>
+	<h1>Styliner</h1>
+	<h2>Making HTML emails sane again</h2>
 </header>
-
+<article>
 <h1 id="about">About</h1>
 Styliner is a Node.js library that takes HTML documents with regular CSS stylesheets, and moves all of the CSS properties into inline styles.
 
@@ -64,24 +65,18 @@ The optional second parameter to the Styliner constructor is an object that can 
 
  - `compact: true`
   - True to minify all output.  This option removes all extraneous whitespace from the generated HTML (including any remaining inline stylesheets)   
-
  - `noCSS: true`
   - True to not emit `<style>` tags for rules that cannot be inlined.  This option will completely drop any dynamic CSS rules. (such as media queries, pseudo-elements, or `@font-face`s)
-
  - `keepRules: true`
   - True to keep all rules in `<style>` tags instead of inlining static rules into elements.  This results in smaller files, but will not work with Gmail.
-
  - `fixYahooMQ: true`
   - True to add an attribute/ID selector to all rules in media queries to fix a bug in Yahoo Mail.  Yahoo Mail drops all media queries, converting their contents to regular rules that will always be applied.  This option adds a workaround for that.
-
  - `keepInvalid: true`
   - Don't skip properties that parserlib reports as invalid. (all invalid properties are always logged as winston errors)
   - Pass this option if you're using features that parser doesn't recognize, or if you come across a bug in parserlib
   - This option breaks Acid2, which tests that valid properties from earlier rules replace invalid properties from later rules.  (see also the first known issue)
-
  - `urlPrefix: "dir/"`
   - The path containing referenced URLs.  All non-absolute URLs in `<a>` tags, `<img>` tags, and stylesheets will have this path prepended.  For greater flexibility, pass a `url()` function instead.
-
  - `url: function(path, type)`
   - A function called to resolve URLs.  All non-absolute URLs in HTML or CSS will be replaced by the return value of this function. The function is passed the relative path to the file and the source of the URL ("img" or "a" or other HTML tags; URLs from CSS pass "img"). It can return a promise or a string.
 
@@ -123,13 +118,11 @@ Styliner will also not inline any selectors that contain `.js`, under the assump
  - Browser property fallbacks don't cascade
   - If you specify `background: red;` in one rule, and `background: linear-gradient(...)` in a more specific rule, Styliner will replace the property from the first rule with the more specific one.  This means that browsers that don't support `linear-gradient()` won't see any background at all. 
   - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin.
-
  - Except for `margin` and `padding`, shorthand inlined properties that are overridden by non-inlined non-shorthand counterparts will not be overridden correctly.
   - To fix this, add splitter methods in Preprocessor.js to split other shorthand properties.
-
  - If one element receives a property from a soft-dynamic (pseudo-class) rule and a static rule, and a different element receives a property from an earlier static rule that overrides that soft-dynamic rule, the soft-dynamic rule will incorrectly override the static rule on the second element.
   - This happens because I need to make the dynamic rule `!important` in order to override the inlined static rule on the first element.
   - I could do another pass to find the and `!important`-ize the inline property in the second element, but that would leave an unfixable problem if there is another dynamic rule that should override that property on the second element.
-
  - Similarly, if one element receives a property from a soft-dynamic (pseudo-class) rule and a static rule, and a different element receives a property from an _later_ static rule that overrides that soft-dynamic rule, but is in turn overridden by a second soft-dynamic rule, the second soft-dynamic rule will be incorrectly overridden.
   - This happens because the inlined property from its static rule is made `!important` to override the already-`!important`-ized less-specific soft-dynamic rule.  It is then impossible to make the more-specific soft-dynamic rule override the inlined property.
+</article>
