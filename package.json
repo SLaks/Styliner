@@ -23,7 +23,7 @@
     "CSSselect": "~0.3.0",
     "q-io": ">=1.1.0",
     "parserlib": ">0.2.0",
-    "qx": "~0.1.0"
+    "qx": "~0.2.4"
   },
   "devDependencies": {
     "commander": "~1.0.5",
