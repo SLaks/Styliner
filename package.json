@@ -1,6 +1,6 @@
 {
   "name": "styliner",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "Applies external CSS stylesheets to HTML emails to work with Gmail.",
   "homepage": "https://github.com/SLaks/Styliner",
   "author": "Schabse Laks <Dev@SLaks.net> (http://slaks.net)",
