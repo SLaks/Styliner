@@ -4,6 +4,7 @@ _site/
 # Tells WebMatrix that this uses Node.js.
 Web.config
 *.suo
+*.sln
 
 lib-cov
 *.seed
