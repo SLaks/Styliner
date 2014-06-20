@@ -66,3 +66,8 @@ Acid2 has the following issues:
 
  - `* html .parser` incorrectly matches `.parser`, resulting in a gray background.
   - This is caused by [CSSselect#8](https://github.com/fb55/CSSselect/issues/8) and [cheerio#162](https://github.com/MatthewMueller/cheerio/issues/162).
+
+
+
+#License
+[MIT](http://opensource.org/licenses/MIT)
