@@ -15,7 +15,7 @@ var styliner = new Styliner(baseDir, { options });
 styliner.processHTML(htmlSource, directory)
     .then(function(source) { ... });
 //Pass filePath to processHTML
-styliner.parseFile(filePath)
+styliner.parseFile(filename, filePath)
       .then(function(source) { ... });
 ```
 
