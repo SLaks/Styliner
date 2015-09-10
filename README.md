@@ -14,6 +14,9 @@ Styliner uses the [Q](https://github.com/kriskowal/q) promise library.
 var styliner = new Styliner(baseDir, { options });
 styliner.processHTML(htmlSource, directory)
     .then(function(source) { ... });
+//Pass filePath to processHTML
+styliner.parseFile(filePath)
+      .then(function(source) { ... });
 ```
 
 The `baseDir` parameter specifies the base directory for relative paths.  When processing an HTML source file, you can optionally specify a directory for that source, and any relative paths within the file will be treated as relative to that directory (instead of relative to the `Styliner` instance's `baseDir`).  
@@ -22,7 +25,7 @@ The `processHTML` method returns a Q promise of the inlined HTML source.
 You can pass an options hash as the second parameter to the `Styliner` constructor with the following options: (all options default to false):
 
  - `compact: true`
-  - True to minify all output.  This option removes all extraneous whitespace from the generated HTML (including any remaining inline stylesheets)   
+  - True to minify all output.  This option removes all extraneous whitespace from the generated HTML (including any remaining inline stylesheets)
  - `noCSS: true`
   - True to not emit `<style>` tags for rules that cannot be inlined.  This option will completely drop any dynamic CSS rules. (such as media queries, pseudo-elements, or `@font-face`s)
  - `keepRules: true`
@@ -40,7 +43,7 @@ You can pass an options hash as the second parameter to the `Styliner` construct
 
 ##Known Issues
  - Browser property fallbacks don't cascade
-  - If you specify `background: red;` in one rule, and `background: linear-gradient(...)` in a more specific rule, Styliner will replace the property from the first rule with the more specific one.  This means that browsers that don't support `linear-gradient()` won't see any background at all. 
+  - If you specify `background: red;` in one rule, and `background: linear-gradient(...)` in a more specific rule, Styliner will replace the property from the first rule with the more specific one.  This means that browsers that don't support `linear-gradient()` won't see any background at all.
   - Instead, put both properties in the same rule, and Styliner will know to keep both of them.  To make this easier, you can use a LESS mixin
  - Except for `margin` and `padding`, shorthand inlined properties that are overridden by non-inlined non-shorthand counterparts will not be overridden correctly.
   - To fix this, add splitter methods in Preprocessor.js to split other shorthand properties.
