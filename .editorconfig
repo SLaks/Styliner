@@ -1,0 +1,11 @@
+; Top-most EditorConfig file
+root = true
+
+[*]
+end_of_line = CRLF
+indent_style = tab
+indent_size = 4
+
+[package.json]
+indent_style = space
+indent_size = 2
