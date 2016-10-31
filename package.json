@@ -1,8 +1,8 @@
 {
   "name": "styliner",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Applies external CSS stylesheets to HTML emails to work with Gmail.",
-  "homepage": "https://github.com/SLaks/Styliner",
+  "homepage": "https://github.com/zamb3zi/Styliner",
   "author": "Schabse Laks <Dev@SLaks.net> (http://slaks.net)",
   "keywords": [
     "email",
@@ -12,7 +12,7 @@
   "main": "lib/Styliner.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/SLaks/Styliner.git"
+    "url": "git://github.com/zamb3zi/Styliner.git"
   },
   "license": "MIT",
   "dependencies": {
