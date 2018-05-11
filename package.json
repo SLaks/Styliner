@@ -18,8 +18,8 @@
   "dependencies": {
     "q": "^1.4.1",
     "cheerio": "~0.10.1",
-    "winston": "~0.6.2",
-    "lodash": "~1.0.0-rc.3",
+    "winston": "^2.4.2",
+    "lodash": "^4.17.5",
     "CSSselect": "~0.3.0",
     "q-io": "^1.13.2",
     "parserlib": ">0.2.0",
